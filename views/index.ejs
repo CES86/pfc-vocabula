@@ -1,2 +1,6 @@
-		<h1><%= title %></h1>
-		<p>Welcome to <%= title %></p>
+<% if(!session.user){ %>
+<a href="/user/new">Registrarse</a>
+<a href="/user/login">Entrar</a>
+<% }else{ %>
+<a href="/user/logout">Salir</a>
+<% } %>

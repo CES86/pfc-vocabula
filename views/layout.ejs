@@ -1,17 +1,44 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title><%= title %></title>
-		<script type="text/javascript">
-			if (document.domain == "pfc-vocabula.herokuapp.com")
-				;
-			else
-				document.write("<meta http-equiv='refresh' content='15'/>");
-		</script>
-		<link rel='stylesheet' href='/stylesheets/style.css' />
-	</head>
-	<body>
-<%- body %>
-	</body>
+<head>
+	<meta charset="utf-8">
+	<title>PFC-Vocabula</title>
+	<script type="text/javascript">
+		if (document.domain == "pfc-vocabula.herokuapp.com")
+			;
+		else
+			document.write("<meta http-equiv='refresh' content='15'/>");
+	</script>
+	<link rel='stylesheet' href='/stylesheets/style.css'/>
+</head>
+<body>
+<h1>Bienvenid@ a PFC-Vocabula</h1>
+<p>La WebApp donde podrás aprender Vocabulario facilmente</p>
+<section class="main" id="s1">
+	<nav class="main" id="n1" role="navigation">
+		<span><a href="/" class="btn btn-primary">Inicio</a></span>
+		<span><a href="/user" class="btn btn-success">Usuario</a></span>
+		<p>
+		<p>
+		<p>
+	</nav>
+	<% if (errors.length) { %>
+	<span id='ErrorMsgs'>
+			Corregir errores:<br/>
+		<% for (var i in errors){ %>
+		<span> <%= errors[i].message %> </span><br/>
+		<% } %>
+	</span>
+	<% } %>
+	<div>
+		<%- body %>
+	</div>
+</section>
+<footer class="main" id="f1">
+	<p>
+	<p>
+	<p>
+		<a href="https://es.wikipedia.org/wiki/Node.js" class="btn btn-default">Acerca de...</a>
+</footer>
+</body>
 </html>
