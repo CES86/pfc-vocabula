@@ -12,33 +12,41 @@
 	<link rel='stylesheet' href='/stylesheets/style.css'/>
 </head>
 <body>
-<h1>Bienvenid@ a PFC-Vocabula</h1>
-<p>La WebApp donde podrás aprender Vocabulario facilmente</p>
-<section class="main" id="s1">
-	<nav class="main" id="n1" role="navigation">
-		<span><a href="/" class="btn btn-primary">Inicio</a></span>
-		<span><a href="/user" class="btn btn-success">Usuario</a></span>
-		<p>
-		<p>
-		<p>
-	</nav>
-	<% if (errors.length) { %>
-	<span id='ErrorMsgs'>
-			Corregir errores:<br/>
-		<% for (var i in errors){ %>
-		<span> <%= errors[i].message %> </span><br/>
+<div id="page-wrap">
+	<header class="main" id="h1">
+		<% if(!session.user){ %>
+		<span class="right"><a href="/user/new">Registrarse</a> - <a href="/user/login">Login</a></span>
+		<% }else{ %>
+		<span class="right"> <%= session.user.username %> - <a href="/user/<%= session.user.username %>/edit">Editar</a> - <a
+					href="/user/logout">Salir</a></span>
 		<% } %>
-	</span>
-	<% } %>
-	<div>
-		<%- body %>
-	</div>
-</section>
-<footer class="main" id="f1">
-	<p>
-	<p>
-	<p>
-		<a href="https://es.wikipedia.org/wiki/Node.js" class="btn btn-default">Acerca de...</a>
-</footer>
+
+		<h2>Bienvenid@ a <span>PFC-Vocabula</span></h2>
+	</header>
+
+	<nav class="main" id="n1" role="navigation">
+		<span><a href="/">Inicio</a></span>
+		<% if(session.user){ %>
+		<span><a href="/user/<%= session.user.username %>">Perfil</a></span>
+		<% } %>
+	</nav>
+
+	<section class="main" id="s1">
+		<% if (errors.length) { %>
+		<span id='ErrorMsgs'>
+        Corregir errores:<br/>
+			<% for (var i in errors) { %>
+			<span> <%= errors[i].message %> </span><br/>
+			<% } %>
+		</span>
+		<% } %>
+
+		<div><%- body %></div>
+	</section>
+
+	<footer class="main" id="f1">
+		<a href="http://es.wikipedia.org/wiki/Node.js">Acerca de...</a>
+	</footer>
+</div>
 </body>
 </html>

@@ -26,8 +26,8 @@ var sequelize = new Sequelize(DB_name, user, pwd,
 		protocol: protocol,
 		port: port,
 		host: host,
-		storage: storage,  // solo SQLite (.env)
-		omitNull: true     // solo Postgres
+		storage: storage,			// solo SQLite (.env)
+		omitNull: true				// solo Postgres
 	}
 );
 
@@ -44,11 +44,23 @@ sequelize.sync().then(function () {
 	User.count().then(function (count) {
 		if (count === 0) {   // la tabla se inicializa solo si está vacía
 			User.bulkCreate(
-				[{username: 'admin', password: '1234', isAdmin: true},
-					{username: 'pepe', password: '5678'} // el valor por defecto de isAdmin es 'false'
+				[
+					{
+						email: 'admin@bbc.com',
+						username: 'admin',
+						password: '1234',
+						isAdmin: true
+					},
+					{
+						email: 'pepe@bbc.com',
+						username: 'pepe',
+						password: '5678'
+					}
 				]
-			).then(function () {
-				console.log('BBDD (User) inicializada');
+			).then(function (bulk) {
+				if (bulk)
+					console.log('BBDD (User) inicializada (' + bulk.length + ')');
+				//console.log(JSON.stringify(bulk[0]));
 			});
 		}
 		else

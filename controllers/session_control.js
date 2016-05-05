@@ -3,7 +3,15 @@ exports.loginRequired = function (req, res, next) {
 	if (req.session.user) {
 		next();
 	} else {
-		res.redirect('/login');
+		res.redirect('/user/login');
+	}
+};
+// MW de autorización de accesos HTTP restringidos
+exports.NOTloginRequired = function (req, res, next) {
+	if (req.session.user) {
+		res.redirect(req.session.redir.toString());// redirección a path anterior
+	} else {
+		next();
 	}
 };
 
@@ -26,13 +34,15 @@ exports.create = function (req, res) {
 
 		if (error) {  // si hay error retornamos mensajes de error de sesión
 			req.session.errors = [{"message": 'Se ha producido un error: ' + error}];
-			res.redirect("login");
+			res.redirect("/user/login");
 			return;
 		}
 
-		// Crear req.user.user y guardar campos   id  y  username
-		// La sesión se define por la existencia de:    req.user.user
-		req.session.user = {id: user.id, username: user.username};
+		// Crear req.session.user y guardar campos   id  y  username
+		// La sesión se define por la existencia de:    req.session.user
+
+		req.session.user = user;//pasar el objeto completo o solo algunos parametros?
+		//req.session.user = {id: user.id, username: user.username, isAdmin: user.isAdmin};
 
 		res.redirect(req.session.redir.toString());// redirección a path anterior a login
 	});

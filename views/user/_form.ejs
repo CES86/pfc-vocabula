@@ -1,0 +1,48 @@
+<p>
+	<label for="email">E-Mail:</label>
+	<input type="text" id="email" name="email" value="<%= session.user ? user.email : '' %>" required/>
+<p>
+	<label for="username">Username:</label>
+	<input type="text" id="username" name="username"
+	       value="<%= session.user ? user.username : '' %>" <%= session.user && !session.user.isAdmin ? 'readonly' : '' %>
+	       required/>
+<p>
+	<label for="password">Password:</label>
+	<input type="password" id="password" name="password" required/>
+<p>
+	<% if (!session.user) { %>
+	<label for="isTeacher">Relación:</label>
+	<input type="radio" name="isTeacher" value="true" required> Profesor
+	<input type="radio" name="isTeacher" value="false" required> Alumno
+	<% } %>
+<p>
+	<label for="firstName">Nombre:</label>
+	<input type="text" id="firstName" name="firstName" value="<%= session.user ? user.firstName : '' %>"/>
+<p>
+	<label for="lastName">Apellido:</label>
+	<input type="text" id="lastName" name="lastName" value="<%= session.user ? user.lastName : '' %>"/>
+<p>
+	<label for="motherLang">Mother Lang:</label>
+	<select name="motherLang">
+		<option value="">-</option>
+		<option value="ES" <%= session.user && user.motherLang === "ES" ? 'selected' : '' %>>Español</option>
+		<option value="EN" <%= session.user && user.motherLang === "EN" ? 'selected' : '' %>>Inglés</option>
+		<option value="FR" <%= session.user && user.motherLang === "FR" ? 'selected' : '' %>>Francés</option>
+	</select>
+<p>
+	<label for="foreignLang">Foreign Lang:</label>
+	<select name="foreignLang">
+		<option value="">-</option>
+		<option value="ES" <%= session.user && user.foreignLang === "ES" ? 'selected' : '' %>>Español</option>
+		<option value="EN" <%= session.user && user.foreignLang === "EN" ? 'selected' : '' %>>Inglés</option>
+		<option value="FR" <%= session.user && user.foreignLang === "FR" ? 'selected' : '' %>>Francés</option>
+	</select>
+<p>
+	<a href="<%= session ? session.redir : '' %>">
+		<button type="button">Cancelar</button>
+	</a>
+	<input type="submit" value="Enviar">
+
+
+	<!--email`, `username`, `password`, `isAdmin`, `isTeacher`, `phoneNumber`, `firstName`, `lastName`,
+	 `motherLang`, `foreignLang`, `authorized`, `classGroup`,-->

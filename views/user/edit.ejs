@@ -1,0 +1,21 @@
+<!--if errors.length bla bla salta pop-up de datos cambiados-->
+<form method="post" action="/user/<%= user.username %>?_method=put">
+	<fieldset>
+		<legend>
+			<p>Editar el <%= user.isAdmin ? 'ADMINISTRADOR' : user.isTeacher ? 'profesor' : 'alumno' %>
+				"<%= user.username %>"</p>
+		</legend>
+		<% include _form.ejs %>
+	</fieldset>
+</form>
+<% if (session.user && session.user.isAdmin && !user.isAdmin) { %>
+<form method="post" action="/user/<%= user.username %>?_method=delete">
+	<fieldset>
+		<legend><p>ATENCIÓN!: BORRAR la cuenta "<%= user.username %>"</p></legend>
+		<button type="submit"
+		        onClick="return confirm('Se va a proceder al borrado de la cuenta de usuario <%= user.username %>');">
+			Eliminar cuenta de "<%= user.username %>"
+		</button>
+	</fieldset>
+</form>
+<% } %>
