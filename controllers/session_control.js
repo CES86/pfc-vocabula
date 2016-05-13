@@ -8,7 +8,7 @@ exports.loginRequired = function (req, res, next) {
 };
 // MW de autorización de accesos HTTP restringidos
 exports.NOTloginRequired = function (req, res, next) {
-	if (req.session.user) {
+	if (req.session.user && !req.session.user.isAdmin) {
 		res.redirect(req.session.redir.toString());// redirección a path anterior
 	} else {
 		next();

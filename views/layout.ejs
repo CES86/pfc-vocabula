@@ -3,24 +3,23 @@
 <head>
 	<meta charset="utf-8">
 	<title>PFC-Vocabula</title>
-	<script type="text/javascript">
-		if (document.domain == "pfc-vocabula.herokuapp.com")
-			;
-		else{
-			document.write("<meta http-equiv='refresh' content='15'/>");
-			document.write("<link rel='stylesheet' href='/css/bootstrap.css'/>");
-		}
-	</script>
+	<% if(hostname == "localhost:3000"){ %>
+	<meta http-equiv='refresh' content='<%= refreshTimer %>'/>
+	<% } %>
 	<link rel='stylesheet' href='/css/style.css'/>
+	<link rel='stylesheet' href='/css/bootstrap.min.css'/>
 </head>
 <body>
+<% var isLogged = typeof(session.user) != "undefined"; %>
+
 <div id="page-wrap">
 	<header class="main" id="h1">
-		<% if(!session.user){ %>
+		<% if(!isLogged){ %>
 		<span class="right"><a href="/user/new">Registrarse</a> - <a href="/user/login">Login</a></span>
 		<% }else{ %>
-		<span class="right"> <%= session.user.username %> - <a href="/user/<%= session.user.username %>/edit">Editar</a> - <a
-					href="/user/logout">Salir</a></span>
+		<span class="right"><%= session.user.username %>
+			- <a href="/user/<%= session.user.username %>/edit">Editar</a>
+			- <a href="/user/logout">Salir</a></span>
 		<% } %>
 
 		<h2>Bienvenid@ a <span>PFC-Vocabula</span></h2>
@@ -47,6 +46,7 @@
 	</section>
 
 	<footer class="main" id="f1">
+		<br><br>
 		<a href="http://es.wikipedia.org/wiki/Node.js">Acerca de...</a>
 	</footer>
 </div>

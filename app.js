@@ -2,7 +2,7 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
+//var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var partials = require('express-partials');
 var methodOverride = require('method-override');
@@ -42,12 +42,14 @@ app.use(function (req, res, next) {
 	}
 
 	// guardar path en user.redir para despues de login
-	if (!req.path.match(/\/login|\/logout|\/new/)) {
+	if (!req.path.match(/\/login|\/logout|\/new|\/edit/)) {
 		req.session.redir = req.path;
 	}
 
 	// Hacer visible req.user en las vistas
 	res.locals.session = req.session;
+	res.locals.hostname = req.headers.host;
+	res.locals.refreshTimer = 15;
 	next();
 });
 

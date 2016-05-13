@@ -21,28 +21,29 @@ exports.create = function (req, res) {
 		foreignLang: req.body.foreignLang.toUpperCase()
 	});
 
-	user
-		.validate()
-		.then(
-			function (err) {
-				if (err) {
-					res.render('user/new', {user: user, errors: err.errors});
-				} else {
-					user // save: guarda en DB campos username y password de user
-						.save({fields: ["email", "username", "password", "isTeacher", "firstName", "lastName", "motherLang", "foreignLang"]})
-						.then(function () {
-							// crea la sesión para que el usuario acceda ya autenticado y redirige a /
-							req.session.user = user;//pasar el objeto completo o solo algunos parametros?
-							//req.session.user = {id: user.id, username: user.username, isAdmin: user.isAdmin};
-							res.redirect('/');
-						});
-				}
+	user.validate().then(
+		function (err) {
+			if (err) {
+				res.render('user/new', {user: user, errors: err.errors});
+			} else {
+				// save: guarda en DB campos username y password de user
+				user.save({
+					fields: ["email", "username", "password", "isTeacher", "firstName", "lastName", "motherLang", "foreignLang"]
+				}).then(function () {
+					// crea la sesión para que el usuario acceda ya autenticado y redirige a /
+					if (!req.session.user || !req.session.user.isAdmin) {
+						req.session.user = user;//pasar el objeto completo o solo algunos parametros?
+						//req.session.user = {id: user.id, username: user.username, isAdmin: user.isAdmin};
+						res.redirect('/');
+					} else
+						res.redirect(req.session.redir.toString());// redirección a path anterior
+				});
 			}
-		).catch(function (error) {
+		}
+	).catch(function (error) {
 		next(error)
 	});
-}
-;
+};
 
 // Comprueba si el user esta registrado en user
 // Si autenticación falla o hay errores se ejecuta callback(error).
@@ -86,7 +87,7 @@ exports.load = function (req, res, next, userName) {
 	});
 };
 
-// MW que permite acciones solamente si el usuario objeto corresponde con el usuario logeado o si es cuenta admin
+// MW que permite acciones solamente si el usuario objeto corresponde con el usuario logeado o si es un admin
 exports.ownershipRequired = function (req, res, next) {
 	var objUser = req.user.username;
 	var logUser = req.session.user.username;
@@ -121,7 +122,7 @@ exports.update = function (req, res, next) {
 		.then(
 			function (err) {
 				if (err) {
-					res.render('/user/' + req.body.username + "/edit", {user: req.user, errors: err.errors});
+					res.render('user/edit', {user: req.user, errors: err.errors});
 				} else {
 					req.user     // save: guarda campo username y password en DB
 						.save({fields: ["email", "username", "password", "firstName", "lastName", "motherLang", "foreignLang"]})
@@ -135,7 +136,7 @@ exports.update = function (req, res, next) {
 	});
 };
 
-// DELETE /user/:id
+// GET/DELETE /user/:id
 exports.destroy = function (req, res) {
 	req.user.destroy().then(function () {
 		// borra la sesión y redirige a /
@@ -146,7 +147,36 @@ exports.destroy = function (req, res) {
 	});
 };
 
-// PUT /user/:id
+// GET /user/:id
 exports.menu = function (req, res, next) {
-	res.render('user/index', {errors: []});
-};
+
+	if (req.session.user.isAdmin) {
+		models.User.findAndCountAll({
+			where: {
+				isAdmin: false,
+				isTeacher: false
+			}
+		}).then(function (students) {
+			// console.log(students.count);
+			// console.log(students.rows);
+			models.User.findAndCountAll({
+				where: {
+					isAdmin: false,
+					isTeacher: true
+				}
+			}).then(function (teachers) {
+				// console.log(teachers.count);
+				// console.log(teachers.rows);
+
+				res.render('user/indexAdmin', {students: students.rows, teachers: teachers.rows, errors: []});
+			})
+		});
+	}
+	else if (req.session.user.isTeacher) {
+		res.render('user/indexTeacher', {errors: []});
+	}
+	else {
+		res.render('user/indexStudent', {errors: []});
+	}
+}
+;

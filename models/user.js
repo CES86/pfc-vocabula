@@ -66,11 +66,11 @@ module.exports = function (sequelize, DataTypes) {
 					notEmpty: {msg: "-> Falta password"}
 				},
 				set: function (password) {
-					var encripted = crypto.createHmac('sha1', key).update(password).digest('hex');
+					var encripted = password;//crypto.createHmac('sha1', key).update(password).digest('hex');
 					// Evita passwords vacíos
-					if (password === '') {
-						encripted = '';
-					}
+					// if (password === '') {
+					// 	encripted = '';
+					// }
 					this.setDataValue('password', encripted);
 				}
 			},
@@ -110,7 +110,7 @@ module.exports = function (sequelize, DataTypes) {
 				allowNull: true
 			},
 			classGroup: {
-				type: DataTypes.STRING,
+				type: DataTypes.STRING, //FK!!!
 				allowNull: true
 				//FK de la clase
 			}
@@ -119,7 +119,7 @@ module.exports = function (sequelize, DataTypes) {
 			paranoid: true,
 			instanceMethods: {
 				verifyPassword: function (password) {
-					var encripted = crypto.createHmac('sha1', key).update(password).digest('hex');
+					var encripted = password;//crypto.createHmac('sha1', key).update(password).digest('hex');
 					return encripted === this.password;
 				}
 			}

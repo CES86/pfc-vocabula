@@ -1,48 +1,62 @@
+<% var isUser = typeof(user) != "undefined"; %>
+<% var isLogged = typeof(session.user) != "undefined"; %>
+<% var isAdmin = isLogged && session.user.isAdmin %>
+<% var isUserAdmin = isUser && user.isAdmin %>
 <p>
 	<label for="email">E-Mail:</label>
-	<input type="text" id="email" name="email" value="<%= session.user ? user.email : '' %>" required/>
+	<input type="text" id="email" name="email" placeholder="anonimo@ejemplo.com"
+	       value="<%= isUser ? user.email : '' %>" required/>
 <p>
 	<label for="username">Username:</label>
 	<input type="text" id="username" name="username"
-	       value="<%= session.user ? user.username : '' %>" <%= session.user && !session.user.isAdmin ? 'readonly' : '' %>
-	       required/>
+	       value="<%= isUser ? user.username : '' %>" <%= isUser && !isAdmin ? 'readonly' : '' %> required/>
 <p>
 	<label for="password">Password:</label>
-	<input type="password" id="password" name="password" required/>
+	<input type="password" id="password" name="password"
+	       value="<%= isUser && isAdmin ? user.password : '' %>" required/>
 <p>
-	<% if (!session.user) { %>
+	<% if (!isUser) { %>
 	<label for="isTeacher">Relación:</label>
 	<input type="radio" name="isTeacher" value="true" required> Profesor
 	<input type="radio" name="isTeacher" value="false" required> Alumno
 	<% } %>
 <p>
+	<% if (!isUserAdmin) { %>
 	<label for="firstName">Nombre:</label>
-	<input type="text" id="firstName" name="firstName" value="<%= session.user ? user.firstName : '' %>"/>
+	<input type="text" id="firstName" name="firstName"
+	       value="<%= isUser ? user.firstName : '' %>"/>
 <p>
 	<label for="lastName">Apellido:</label>
-	<input type="text" id="lastName" name="lastName" value="<%= session.user ? user.lastName : '' %>"/>
+	<input type="text" id="lastName" name="lastName"
+	       value="<%= isUser ? user.lastName : '' %>"/>
 <p>
 	<label for="motherLang">Mother Lang:</label>
 	<select name="motherLang">
 		<option value="">-</option>
-		<option value="ES" <%= session.user && user.motherLang === "ES" ? 'selected' : '' %>>Español</option>
-		<option value="EN" <%= session.user && user.motherLang === "EN" ? 'selected' : '' %>>Inglés</option>
-		<option value="FR" <%= session.user && user.motherLang === "FR" ? 'selected' : '' %>>Francés</option>
+		<option value="ES" <%= isUser && user.motherLang === "ES" ? 'selected' : '' %>>Español
+		</option>
+		<option value="EN" <%= isUser && user.motherLang === "EN" ? 'selected' : '' %>>Inglés
+		</option>
+		<option value="FR" <%= isUser && user.motherLang === "FR" ? 'selected' : '' %>>Francés
+		</option>
 	</select>
 <p>
 	<label for="foreignLang">Foreign Lang:</label>
 	<select name="foreignLang">
 		<option value="">-</option>
-		<option value="ES" <%= session.user && user.foreignLang === "ES" ? 'selected' : '' %>>Español</option>
-		<option value="EN" <%= session.user && user.foreignLang === "EN" ? 'selected' : '' %>>Inglés</option>
-		<option value="FR" <%= session.user && user.foreignLang === "FR" ? 'selected' : '' %>>Francés</option>
+		<option value="ES" <%= isUser && user.foreignLang === "ES" ? 'selected' : '' %>>
+			Español
+		</option>
+		<option value="EN" <%= isUser && user.foreignLang === "EN" ? 'selected' : '' %>>
+			Inglés
+		</option>
+		<option value="FR" <%= isUser && user.foreignLang === "FR" ? 'selected' : '' %>>
+			Francés
+		</option>
 	</select>
 <p>
-	<a href="<%= session ? session.redir : '' %>">
-		<button type="button">Cancelar</button>
+	<% } %>
+	<a href="<%= session ? session.redir : '/' %>">
+		<button type="button">Volver</button>
 	</a>
 	<input type="submit" value="Enviar">
-
-
-	<!--email`, `username`, `password`, `isAdmin`, `isTeacher`, `phoneNumber`, `firstName`, `lastName`,
-	 `motherLang`, `foreignLang`, `authorized`, `classGroup`,-->
