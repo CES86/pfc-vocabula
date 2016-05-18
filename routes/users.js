@@ -5,6 +5,7 @@ var router = express.Router();
 
 var sessionControl = require('../controllers/session_control');
 var userControl = require('../controllers/user_control');
+var upLoadControl = require('../controllers/upload_control');
 
 /* GET user listing. */
 router.get('/', sessionControl.loginRequired, function (req, res, next) {
@@ -23,6 +24,10 @@ router.get('/logout', sessionControl.loginRequired, sessionControl.destroy);	// 
 // Definición de rutas de Usuario [sobre el Path "/user/*"]
 router.get('/new', sessionControl.NOTloginRequired, userControl.newUser);		// formulario de registro
 router.post('/new', sessionControl.NOTloginRequired, userControl.create);		// registrar usuario
+
+// Cargar un archivo de registro de varios Usuarios para su posterior tratamiento
+router.post('/upload', userControl.ownershipRequired, upLoadControl.upLoadUserLot, userControl.uploadUserLot);		// subir archivo
+
 router.get('/:userName([a-zA-Z]+)/edit', sessionControl.loginRequired, userControl.ownershipRequired, userControl.edit);		// editar información de cuenta
 router.put('/:userName([a-zA-Z]+)', sessionControl.loginRequired, userControl.ownershipRequired, userControl.update);			// actualizar información de cuenta
 router.get('/:userName([a-zA-Z]+)', sessionControl.loginRequired, userControl.ownershipRequired, userControl.menu);				// actualizar información de cuenta

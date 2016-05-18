@@ -28,6 +28,7 @@ app.use(session({
 	secret: 'PFC-Vocabula',
 	resave: true,
 	saveUninitialized: true,
+	cookie: {secure: false}
 }));
 
 app.use(methodOverride('_method'));
@@ -42,14 +43,14 @@ app.use(function (req, res, next) {
 	}
 
 	// guardar path en user.redir para despues de login
-	if (!req.path.match(/\/login|\/logout|\/new|\/edit/)) {
+	if (!req.path.match(/\/login|\/logout|\/new|\/edit|\/upload/)) {
 		req.session.redir = req.path;
 	}
 
 	// Hacer visible req.user en las vistas
 	res.locals.session = req.session;
 	res.locals.hostname = req.headers.host;
-	res.locals.refreshTimer = 15;
+	res.locals.refreshTimer = 20;
 	next();
 });
 

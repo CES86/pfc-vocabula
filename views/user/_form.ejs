@@ -8,11 +8,11 @@
 	       value="<%= isUser ? user.email : '' %>" required/>
 <p>
 	<label for="username">Username:</label>
-	<input type="text" id="username" name="username"
-	       value="<%= isUser ? user.username : '' %>" <%= isUser && !isAdmin ? 'readonly' : '' %> required/>
+	<input type="text" id="username" name="username" placeholder="usuario"
+	       value="<%= isUser ? user.username : '' %>" <%= isUserAdmin || !isAdmin ? 'readonly' : '' %> required/>
 <p>
 	<label for="password">Password:</label>
-	<input type="password" id="password" name="password"
+	<input type="password" id="password" name="password" placeholder="**********"
 	       value="<%= isUser && isAdmin ? user.password : '' %>" required/>
 <p>
 	<% if (!isUser) { %>
@@ -23,11 +23,11 @@
 <p>
 	<% if (!isUserAdmin) { %>
 	<label for="firstName">Nombre:</label>
-	<input type="text" id="firstName" name="firstName"
+	<input type="text" id="firstName" name="firstName" placeholder="Pepito"
 	       value="<%= isUser ? user.firstName : '' %>"/>
 <p>
 	<label for="lastName">Apellido:</label>
-	<input type="text" id="lastName" name="lastName"
+	<input type="text" id="lastName" name="lastName" placeholder="Pérez"
 	       value="<%= isUser ? user.lastName : '' %>"/>
 <p>
 	<label for="motherLang">Mother Lang:</label>

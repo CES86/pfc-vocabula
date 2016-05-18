@@ -2,7 +2,16 @@ Mostrar el Menú para '<%= session.user.username %>'<br>
 <br>
 <a href="/user/new">Añadir Usuario</a>
 <br>
-Añadir LOTE Usuarios (csv,etc..)<br>
+<br>
+<form enctype="multipart/form-data" action="/user/upload" method="post">
+	<div class="form-group">
+		<label for="exampleInputFile">Cargar LOTE de Usuarios</label>
+		<input type="file" name="userLot" accept=".csv">
+		<p class="help-block">Seleccione un fichero .CSV válido.</p>
+	</div>
+	<button type="submit" class="btn btn-default">Enviar</button>
+</form>
+<br>
 <br>
 <table class="table table-striped table-hover table-condensed">
 	<thead>

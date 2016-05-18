@@ -46,17 +46,44 @@ sequelize.sync().then(function () {
 			User.bulkCreate(
 				[
 					{
+						email: 'system@bbc.com',
+						username: 'system',
+						password: '0000',
+						isAdmin: true,
+						isTeacher: true
+					},
+					{
 						email: 'admin@bbc.com',
 						username: 'admin',
 						password: '1234',
 						isAdmin: true
 					},
 					{
-						email: 'pepe@bbc.com',
-						username: 'pepe',
-						password: '5678'
+						email: 'alex@bbc.com',
+						username: 'alex',
+						password: '0000',
+						isTeacher: true
+					},
+					{
+						email: 'luisito@bbc.com',
+						username: 'luisito',
+						password: 'x'
+					},
+					{
+						email: 'victor@bbc.com',
+						username: 'victor',
+						password: 'y'
+					},
+					{
+						email: 'clara@bbc.com',
+						username: 'clara',
+						password: 'z'
 					}
-				]
+				],
+				{
+					validate: true,
+					benchmark: true
+				}
 			).then(function (bulk) {
 				if (bulk)
 					console.log('BBDD (User) inicializada (' + bulk.length + ')');
@@ -67,3 +94,8 @@ sequelize.sync().then(function () {
 			console.log('BBDD (User) Contiene ' + count + ' registros!');
 	});
 });
+
+exports.parseUserLot = function (pathFile) {
+	console.log('Parsing and inserting the filev (TODO)... ' + pathFile);
+	//TODO REALIZAR PARSING & INSERT
+};

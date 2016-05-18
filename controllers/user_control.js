@@ -45,6 +45,13 @@ exports.create = function (req, res) {
 	});
 };
 
+// POST /user
+exports.uploadUserLot = function (req, res) {
+	//Analizar el archivo!
+	models.parseUserLot(req.file.path);
+	res.redirect(req.session.redir.toString());
+};
+
 // Comprueba si el user esta registrado en user
 // Si autenticación falla o hay errores se ejecuta callback(error).
 exports.autenticar = function (login, password, callback) {
