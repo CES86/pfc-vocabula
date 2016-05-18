@@ -26,7 +26,7 @@ router.get('/new', sessionControl.NOTloginRequired, userControl.newUser);		// fo
 router.post('/new', sessionControl.NOTloginRequired, userControl.create);		// registrar usuario
 
 // Cargar un archivo de registro de varios Usuarios para su posterior tratamiento
-router.post('/upload', userControl.ownershipRequired, upLoadControl.upLoadUserLot, userControl.uploadUserLot);		// subir archivo
+router.post('/upload', sessionControl.loginRequired, userControl.adminRequired, upLoadControl.upLoadUserLot, userControl.uploadUserLot);
 
 router.get('/:userName([a-zA-Z]+)/edit', sessionControl.loginRequired, userControl.ownershipRequired, userControl.edit);		// editar información de cuenta
 router.put('/:userName([a-zA-Z]+)', sessionControl.loginRequired, userControl.ownershipRequired, userControl.update);			// actualizar información de cuenta

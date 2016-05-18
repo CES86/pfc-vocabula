@@ -107,6 +107,17 @@ exports.ownershipRequired = function (req, res, next) {
 	}
 };
 
+// MW que permite acciones solamente si el usuario logeado es un admin
+exports.adminRequired = function (req, res, next) {
+	var isAdmin = req.session.user.isAdmin;
+
+	if (isAdmin) {
+		next();
+	} else {
+		res.redirect(req.session.redir.toString());// redirección a path anterior a login
+	}
+};
+
 // GET /user/:id/edit
 exports.edit = function (req, res) {
 	res.render('user/edit', {user: req.user, errors: []}); // req.user: instancia de user cargada con autoload
