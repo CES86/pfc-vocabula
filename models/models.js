@@ -95,7 +95,56 @@ sequelize.sync().then(function () {
 	});
 });
 
+var parserCSV = function (path) {
+	var fs = require('fs');
+	var byline = require('byline');
+
+	var stream = fs.createReadStream(path);
+	stream = byline.createStream(stream);
+
+	var numLine = 0;
+
+	stream.on('data', function (line) {
+			numLine++;
+			console.log(line);
+			var values = line.split(",");
+			if (values.length < 13)
+				console.log('ERROR: en la línea #' + numLine);
+			else {
+				var user = User.build({
+					email: values[1].toLowerCase(),
+					username: values[2].toLowerCase(),
+					password: values[3],
+					isAdmin: values[4],
+					isTeacher: values[5],
+					authorized: values[6],
+					phoneNumber: values[7],
+					firstName: values[8],
+					lastName: values[9],
+					motherLang: values[10].toUpperCase(),
+					foreignLang: values[11].toUpperCase(),
+					classGroup: values[12]
+				});
+				user.save({//TODO revisar captura de errores
+					fields: ["email",
+						"username",
+						"password",
+						// "isAdmin",
+						"isTeacher",
+						// "authorized",
+						"firstName",
+						"lastName",
+						"motherLang",
+						"foreignLang",
+						// "classGroup"
+					]
+				});
+			}
+		}
+	);
+};
+
 exports.parseUserLot = function (pathFile) {
 	console.log('Parsing and inserting the filev (TODO)... ' + pathFile);
-	//TODO REALIZAR PARSING & INSERT
+	parserCSV(pathFile);
 };

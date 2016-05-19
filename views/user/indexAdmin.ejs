@@ -6,7 +6,7 @@ Mostrar el Menú para '<%= session.user.username %>'<br>
 <form enctype="multipart/form-data" action="/user/upload" method="post">
 	<div class="form-group">
 		<label for="exampleInputFile">Cargar LOTE de Usuarios</label>
-		<input type="file" name="userLot" accept=".csv">
+		<input type="file" name="userLot" accept=".csv" required>
 		<p class="help-block">Seleccione un fichero .CSV válido.</p>
 	</div>
 	<button type="submit" class="btn btn-default">Enviar</button>
