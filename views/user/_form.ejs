@@ -1,6 +1,7 @@
 <% var isUser = typeof(user) != "undefined"; %>
 <% var isLogged = typeof(session.user) != "undefined"; %>
 <% var isAdmin = isLogged && session.user.isAdmin %>
+<% var isNotAdmin = isLogged && !session.user.isAdmin %>
 <% var isUserAdmin = isUser && user.isAdmin %>
 <p>
 	<label for="email">E-Mail:</label>
@@ -9,7 +10,7 @@
 <p>
 	<label for="username">Username:</label>
 	<input type="text" id="username" name="username" placeholder="usuario"
-	       value="<%= isUser ? user.username : '' %>" <%= isUserAdmin || !isAdmin ? 'readonly' : '' %> required/>
+	       value="<%= isUser ? user.username : '' %>" <%= isNotAdmin || isUserAdmin ? 'readonly' : '' %> required/>
 <p>
 	<label for="password">Password:</label>
 	<input type="password" id="password" name="password" placeholder="**********"
