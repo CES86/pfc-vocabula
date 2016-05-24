@@ -1,4 +1,4 @@
-Mostrar el Menú para '<%= session.user.username %>'<br>
+Mostrar el Menú para <b>'<%= session.user.username.toUpperCase() %>'</b><br>
 <br>
 <a href="/user/new">Añadir Usuario</a>
 <br>
@@ -27,8 +27,10 @@ Mostrar el Menú para '<%= session.user.username %>'<br>
 	<% for(var i = 0; i < students.length; i++) { %>
 	<tr>
 		<td>
-			<span class="glyphicon glyphicon-user" aria-hidden="true"> </span>
-			<%= students[i].username %>
+			<a href="/user/<%= students[i].username %>">
+				<span class="glyphicon glyphicon-user" aria-hidden="true"> </span>
+				<%= students[i].username %>
+			</a>
 		</td>
 		<td>
 			<a href="/user/<%= students[i].username %>/edit">
@@ -58,8 +60,10 @@ Mostrar el Menú para '<%= session.user.username %>'<br>
 	<% for(var i = 0; i < teachers.length; i++) { %>
 	<tr>
 		<td>
-			<span class="glyphicon glyphicon-briefcase" aria-hidden="true"> </span>
-			<%= teachers[i].username %>
+			<a href="/user/<%= teachers[i].username %>">
+				<span class="glyphicon glyphicon-user" aria-hidden="true"> </span>
+				<%= teachers[i].username %>
+			</a>
 		</td>
 		<td>
 			<a href="/user/<%= teachers[i].username %>/edit">

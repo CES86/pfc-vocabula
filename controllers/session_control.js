@@ -14,6 +14,26 @@ exports.NOTloginRequired = function (req, res, next) {
 		next();
 	}
 };
+// MW que permite acciones solamente si el usuario logeado es un admin
+exports.loginAdminRequired = function (req, res, next) {
+	if (req.session.user)
+		if (req.session.user.isAdmin)
+			next();
+		else
+			res.redirect(req.session.redir.toString());// redirección a path anterior
+	else
+		res.redirect('/user/login');
+};
+// MW de autorización de accesos HTTP restringidos
+exports.loginTeacherRequired = function (req, res, next) {
+	if (req.session.user)
+		if (req.session.user.isTeacher || req.session.user.isAdmin)
+			next();
+		else
+			res.redirect(req.session.redir.toString());// redirección a path anterior
+	else
+		res.redirect('/user/login');
+};
 
 // Get /login   -- Formulario de login
 exports.new = function (req, res) {

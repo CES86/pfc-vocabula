@@ -3,12 +3,12 @@ var multer = require('multer');
 
 var userLotDir = './private/user/';
 var wordLotDir = './private/word/';
-var transLotDir = './private/translation/';
+var translationLotDir = './private/translation/';
 
 var mkdirp = require('mkdirp');
 mkdirp(userLotDir);
 mkdirp(wordLotDir);
-mkdirp(transLotDir);
+mkdirp(translationLotDir);
 
 var storage = function (destination) {
 	return multer.diskStorage({
@@ -22,3 +22,5 @@ var storage = function (destination) {
 };
 
 exports.upLoadUserLot = multer({storage: storage(userLotDir)}).single('userLot');
+exports.upLoadWordLot = multer({storage: storage(wordLotDir)}).single('wordLot');
+exports.upLoadTranslationLot = multer({storage: storage(translationLotDir)}).single('translationLot');

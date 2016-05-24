@@ -107,17 +107,6 @@ exports.ownershipRequired = function (req, res, next) {
 	}
 };
 
-// MW que permite acciones solamente si el usuario logeado es un admin
-exports.adminRequired = function (req, res, next) {
-	var isAdmin = req.session.user.isAdmin;
-
-	if (isAdmin) {
-		next();
-	} else {
-		res.redirect(req.session.redir.toString());// redirección a path anterior a login
-	}
-};
-
 // GET /user/:id/edit
 exports.edit = function (req, res) {
 	res.render('user/edit', {user: req.user, errors: []}); // req.user: instancia de user cargada con autoload
@@ -167,8 +156,10 @@ exports.destroy = function (req, res) {
 
 // GET /user/:id
 exports.menu = function (req, res, next) {
+	var userSession = req.session.user;
+	var userURL = req.user;
 
-	if (req.session.user.isAdmin) {
+	if (userURL.isAdmin) {
 		models.User.findAndCountAll({
 			where: {
 				isAdmin: false,
@@ -190,8 +181,16 @@ exports.menu = function (req, res, next) {
 			})
 		});
 	}
-	else if (req.session.user.isTeacher) {
-		res.render('user/indexTeacher', {errors: []});
+	else if (userURL.isTeacher) {
+		models.Word.findAndCountAll().then(function (words) {
+			// console.log(students.count);
+			// console.log(students.rows);
+			models.Translation.findAndCountAll().then(function (translations) {
+				// console.log(teachers.count);
+				// console.log(teachers.rows);
+				res.render('user/indexTeacher', {words: words.rows, translations: translations.rows, errors: []});
+			});
+		});
 	}
 	else {
 		res.render('user/indexStudent', {errors: []});

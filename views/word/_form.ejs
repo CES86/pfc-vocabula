@@ -1,0 +1,24 @@
+<p>
+	<label for="langue">Mother Lang:</label>
+	<select name="langue" required>
+		<option value="">-</option>
+		<option value="ES">Español
+		</option>
+		<option value="EN">Inglés
+		</option>
+		<option value="FR">Francés
+		</option>
+	</select>
+<p>
+	<label for="word">Word:</label>
+	<input type="text" id="word" name="word" placeholder="word" required/>
+<p>
+	<label for="aception">Aception:</label>
+	<input type="text" id="aception" name="aception" placeholder="aception" required/>
+<p>
+	<input type="hidden" id="UserId" name="UserId" value="<%= session.user.id %>" required/>
+<p>
+	<a href="<%= session ? session.redir : '/' %>">
+		<button type="button">Volver</button>
+	</a>
+	<input type="submit" value="Enviar">
