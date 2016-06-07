@@ -124,21 +124,19 @@ exports.update = function (req, res, next) {
 	req.user.motherLang = req.body.motherLang;
 	req.user.foreignLang = req.body.foreignLang;
 
-	req.user
-		.validate()
-		.then(
-			function (err) {
-				if (err) {
-					res.render('user/edit', {user: req.user, errors: err.errors});
-				} else {
-					req.user     // save: guarda campo username y password en DB
-						.save({fields: ["email", "username", "password", "firstName", "lastName", "motherLang", "foreignLang"]})
-						.then(function () {
-							res.redirect('/user/' + req.user.username); //añadir algo como, {errors: errors}???INFO!
-						});
-				}     // Redirección HTTP a /
-			}
-		).catch(function (error) {
+	req.user.validate().then(
+		function (err) {
+			if (err) {
+				res.render('user/edit', {user: req.user, errors: err.errors});
+			} else {
+				req.user     // save: guarda campo username y password en DB
+					.save({fields: ["email", "username", "password", "firstName", "lastName", "motherLang", "foreignLang"]})
+					.then(function () {
+						res.redirect('/user/' + req.user.username); //añadir algo como, {errors: errors}???INFO!
+					});
+			}     // Redirección HTTP a /
+		}
+	).catch(function (error) {
 		next(error)
 	});
 };
@@ -177,19 +175,19 @@ exports.menu = function (req, res, next) {
 				// console.log(teachers.count);
 				// console.log(teachers.rows);
 
-				res.render('user/indexAdmin', {students: students.rows, teachers: teachers.rows, errors: []});
+				res.render('user/indexAdmin', {
+					user: userURL,
+					students: students.rows,
+					teachers: teachers.rows,
+					errors: []
+				});
 			})
 		});
 	}
 	else if (userURL.isTeacher) {
-		models.Word.findAndCountAll().then(function (words) {
-			// console.log(students.count);
-			// console.log(students.rows);
-			models.Translation.findAndCountAll().then(function (translations) {
-				// console.log(teachers.count);
-				// console.log(teachers.rows);
-				res.render('user/indexTeacher', {words: words.rows, translations: translations.rows, errors: []});
-			});
+		res.render('user/indexTeacher', {
+			user: userURL,
+			errors: []
 		});
 	}
 	else {

@@ -1,0 +1,23 @@
+<p>
+	<label for="origen">Lengua ORIGEN:</label>
+	<select name="origen" required>
+		<option value="">-</option>
+		<% for(var i = 0; i < langues.length; i++) { %>
+		<option value="<%= langues[i].DISTINCT %>"><%= langues[i].DISTINCT %>
+		</option>
+		<% } %>
+	</select>
+<p>
+	<label for="destino">Lengua DESTINO:</label>
+	<select name="destino" required>
+		<option value="">-</option>
+		<% for(var i = 0; i < langues.length; i++) { %>
+		<option value="<%= langues[i].DISTINCT %>"><%= langues[i].DISTINCT %>
+		</option>
+		<% } %>
+	</select>
+<p>
+	<a href="<%= session ? session.redir : '/' %>">
+		<button type="button">Volver</button>
+	</a>
+	<input type="submit" value="Continuar">

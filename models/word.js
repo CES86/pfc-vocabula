@@ -31,29 +31,23 @@ module.exports = function (sequelize, DataTypes) {
 				validate: {
 					notEmpty: {msg: "-> Falta acepción"}
 				}
-			}//,
-			// authorized: {
-			// 	type: DataTypes.BOOLEAN,
-			// 	allowNull: false,
-			// 	defaultValue: false
-			// }
+			}
 		},
 		{
-			// paranoid: true,
-			instanceMethods: {
-				isUnique: function (callback) {
-					Word.find({where: {langue: this.langue, word: this.word, aception: this.aception}})
-						.then(function (word) {
-							if (word != null) {
-								callback(new Error('Palabra ya utilizada.'));
-							}
-							callback(null);
-						})
-						.catch(function (error) {
-							callback(error);
-						});
-				}
-			}
+			// instanceMethods: {
+			// 	isUnique: function (callback) {
+			// 		Word.find({where: {langue: this.langue, word: this.word, aception: this.aception}})
+			// 			.then(function (word) {
+			// 				if (word != null) {
+			// 					callback(new Error('Palabra ya utilizada.'));
+			// 				}
+			// 				callback(null);
+			// 			})
+			// 			.catch(function (error) {
+			// 				callback(error);
+			// 			});
+			// 	}
+			// }
 		}
 	);
 	return Word;

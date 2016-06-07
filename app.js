@@ -10,6 +10,8 @@ var session = require('express-session');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var words = require('./routes/words');
+var translations = require('./routes/translations');
 
 var app = express();
 
@@ -43,7 +45,7 @@ app.use(function (req, res, next) {
 	}
 
 	// guardar path en user.redir para despues de login
-	if (!req.path.match(/\/login|\/logout|\/new|\/edit|\/upload/)) {
+	if (!req.path.match(/\/login|\/logout|\/new|\/edit|\/upload|\/add/)) {
 		req.session.redir = req.path;
 	}
 
@@ -56,6 +58,8 @@ app.use(function (req, res, next) {
 
 app.use('/', routes);
 app.use('/user', users);
+app.use('/word', words);
+app.use('/translation', translations);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

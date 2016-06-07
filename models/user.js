@@ -84,15 +84,6 @@ module.exports = function (sequelize, DataTypes) {
 				allowNull: false,
 				defaultValue: false
 			},
-			authorized: {
-				type: DataTypes.BOOLEAN,
-				allowNull: false,
-				defaultValue: false
-			},
-			phoneNumber: {
-				type: DataTypes.INTEGER(9),
-				allowNull: true
-			},
 			firstName: {
 				type: DataTypes.STRING,
 				allowNull: true
@@ -108,15 +99,9 @@ module.exports = function (sequelize, DataTypes) {
 			foreignLang: {
 				type: DataTypes.STRING(2),
 				allowNull: true
-			},
-			classGroup: {
-				type: DataTypes.STRING, //FK!!!
-				allowNull: true
-				//FK de la clase
 			}
 		},
 		{
-			paranoid: true,
 			instanceMethods: {
 				verifyPassword: function (password) {
 					var encripted = password;//crypto.createHmac('sha1', key).update(password).digest('hex');
@@ -124,7 +109,6 @@ module.exports = function (sequelize, DataTypes) {
 				}
 			}
 		}
-		)
-		;
+	);
 	return User;
 }

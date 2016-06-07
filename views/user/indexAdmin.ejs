@@ -1,4 +1,7 @@
-Mostrar el Menú para <b>'<%= session.user.username.toUpperCase() %>'</b><br>
+<% var fN = user.firstName; %>
+<% var lN = user.lastName; %>
+
+Mostrar el Menú para <b><%= (fN || lN ? fN + " " + lN : '"' + user.username.toUpperCase() + '"') %></b><br>
 <br>
 <a href="/user/new">Añadir Usuario</a>
 <br>
