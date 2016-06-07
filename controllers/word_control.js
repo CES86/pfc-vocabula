@@ -1,24 +1,5 @@
 var models = require('../models/models.js');
 
-// // Autoload :id
-// exports.load = function (req, res, next, userName) {
-// 	models.Word.find({
-// 		where: {
-// 			username: userName.toLocaleLowerCase()
-// 		}
-// 	}).then(function (user) {
-// 			if (user) {
-// 				req.user = user;
-// 				next();
-// 			} else {
-// 				next(new Error('No existe el UserName = ' + userName))
-// 			}
-// 		}
-// 	).catch(function (error) {
-// 		next(error)
-// 	});
-// };
-
 // Get /   -- Formulario de login
 exports.showWords = function (req, res) {
 	models.Word.findAndCountAll({order: [['langue', 'ASC']]}).then(function (words) {
