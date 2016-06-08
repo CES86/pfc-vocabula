@@ -2,9 +2,12 @@ var models = require('../models/models.js');
 
 // Get /   -- Formulario de login
 exports.showWords = function (req, res) {
-	models.Word.findAndCountAll({order: [['langue', 'ASC']]}).then(function (words) {
+	models.Word.findAll({
+		attributes: ['langue', 'word', 'aception'],
+		order: [['langue', 'ASC'],['word', 'ASC']]
+	}).then(function (words) {
 		res.render('word/index', {
-			words: words.rows,
+			words: words,
 			errors: []
 		});
 	});

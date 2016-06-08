@@ -5,31 +5,33 @@ var env = require('node-env-file');
 // Usefull for testing env vars in development, but using "real" env vars in production
 env(__dirname + '/.env', {raise: false});
 
-// Postgres DATABASE_URL = postgres://user:passwd@host:port/database
-// SQLite   DATABASE_URL = sqlite://:@:/
-var url = process.env.DATABASE_URL.match(/(.*)\:\/\/(.*?)\:(.*)@(.*)\:(.*)\/(.*)/);
-var DB_name = (url[6] || null);
-var user = (url[2] || null);
-var pwd = (url[3] || null);
-var protocol = (url[1] || null);
-var port = (url[5] || null);
-var host = (url[4] || null);
-var storage = process.env.DATABASE_STORAGE;
-
 // Cargar Modelo ORM
 var Sequelize = require('sequelize');
 
-// Usar BBDD SQLite o Postgres
-var sequelize = new Sequelize(DB_name, user, pwd,
-	{
-		dialect: protocol,
-		protocol: protocol,
-		port: port,
-		host: host,
-		storage: storage,			// solo SQLite (.env)
-		omitNull: true				// solo Postgres
-	}
-);
+// // Postgres DATABASE_URL = postgres://user:passwd@host:port/database
+// // SQLite   DATABASE_URL = sqlite://:@:/
+// var url = process.env.DATABASE_URL.match(/(.*)\:\/\/(.*?)\:(.*)@(.*)\:(.*)\/(.*)/);
+// var DB_name = (url[6] || null);
+// var user = (url[2] || null);
+// var pwd = (url[3] || null);
+// var protocol = (url[1] || null);
+// var port = (url[5] || null);
+// var host = (url[4] || null);
+// var storage = process.env.DATABASE_STORAGE;
+//
+// // Usar BBDD SQLite o Postgres
+// var sequelize = new Sequelize(DB_name, user, pwd,
+// 	{
+// 		dialect: protocol,
+// 		protocol: protocol,
+// 		port: port,
+// 		host: host,
+// 		storage: storage,			// solo SQLite (.env)
+// 		omitNull: true				// solo Postgres
+// 	}
+// );
+
+var sequelize = new Sequelize(process.env.DATABASE_URL);
 
 //IMPORTACIÓN DE TABLAS
 //=====================
@@ -282,7 +284,8 @@ var parserCSV = function (path, type, structure, userId) {
 										word: values[1].toLowerCase(),
 										aception: values[2].toLowerCase()
 									},
-									defaults: {UserId: userId}
+									defaults: {UserId: userId},
+									attributes: ['id']
 								}).spread(function (word1, created1) {
 									Word.findOrCreate({
 										where: {
@@ -290,7 +293,8 @@ var parserCSV = function (path, type, structure, userId) {
 											word: values[4].toLowerCase(),
 											aception: values[5].toLowerCase()
 										},
-										defaults: {UserId: userId}
+										defaults: {UserId: userId},
+										attributes: ['id']
 									}).spread(function (word2, created2) {
 										Translation.find({
 											where: {
@@ -304,7 +308,8 @@ var parserCSV = function (path, type, structure, userId) {
 														Word2Id: word1.id
 													},
 												]
-											}
+											},
+											attributes: []
 										}).then(function (busqueda) {
 											if (!busqueda) {
 												var translation = Translation.build({
@@ -340,14 +345,24 @@ exports.parseUserLot = function (pathFile) {
 };
 
 exports.parseWordLot = function (pathFile, UserId) {
-	User.findByPrimary(UserId).then(function (user) {
+	User.find({
+		where: {
+			id: UserId
+		},
+		attributes: ['username']
+	}).then(function (user) {
 		console.log('Parsing and inserting the file of Words by ' + user.username + '... ' + pathFile);
 		parserCSV(pathFile, 'WORD', structureWORDs, UserId);
 	});
 };
 
 exports.parseTranslationLot = function (pathFile, UserId) {
-	User.findByPrimary(UserId).then(function (user) {
+	User.find({
+		where: {
+			id: UserId
+		},
+		attributes: ['username']
+	}).then(function (user) {
 		console.log('Parsing and inserting the file of Translations by ' + user.username + ' ... ' + pathFile);
 		parserCSV(pathFile, 'TRANSLATION', structureTRANSLATIONs, UserId);
 	});

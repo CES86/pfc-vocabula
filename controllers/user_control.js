@@ -58,22 +58,31 @@ exports.autenticar = function (login, password, callback) {
 	models.User.find({
 		where: {
 			username: login
-		}
+		},
+		attributes: ['id', 'username', 'isAdmin', 'isTeacher', 'firstName', 'lastName']
 	}).then(function (user) {
 		if (user) {
-			if (user.verifyPassword(password)) {
-				callback(null, user);
-			}
-			else {
-				callback(new Error('Password erróneo.'));
-			}
-		} else {
-			callback(new Error('No existe user ' + login))
+			models.User.find({
+				where: {
+					id: user.id
+				},
+				attributes: ['password']
+			}).then(function (userPass) {
+				if (userPass.verifyPassword(password)) {
+					callback(null, user);
+				}
+				else {
+					callback(new Error('Password erróneo.'));
+				}
+			});
 		}
+		else
+			callback(new Error('No existe user ' + login))
 	}).catch(function (error) {
 		callback(error)
 	});
-};
+}
+;
 
 // Autoload :id
 exports.load = function (req, res, next, userName) {
@@ -158,27 +167,24 @@ exports.menu = function (req, res, next) {
 	var userURL = req.user;
 
 	if (userURL.isAdmin) {
-		models.User.findAndCountAll({
+		models.User.findAll({
 			where: {
 				isAdmin: false,
 				isTeacher: false
-			}
+			},
+			attributes: ['username', 'firstName', 'lastName']
 		}).then(function (students) {
-			// console.log(students.count);
-			// console.log(students.rows);
-			models.User.findAndCountAll({
+			models.User.findAll({
 				where: {
 					isAdmin: false,
 					isTeacher: true
-				}
+				},
+				attributes: ['username', 'firstName', 'lastName']
 			}).then(function (teachers) {
-				// console.log(teachers.count);
-				// console.log(teachers.rows);
-
 				res.render('user/indexAdmin', {
 					user: userURL,
-					students: students.rows,
-					teachers: teachers.rows,
+					students: students,
+					teachers: teachers,
 					errors: []
 				});
 			})

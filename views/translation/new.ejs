@@ -3,7 +3,7 @@
 	<fieldset>
 		<legend><p>Crear traducción nueva</p></legend>
 		<p>
-			<label for="word1">ORIGEN "<%= wordsOrigen[0].langue %>":</label><br>
+			<label for="word1">ORIGEN "<%= origenLang %>":</label><br>
 			<select name="word1" size="<%= sizeSelect %>" required>
 				<% for(var i = 0; i < wordsOrigen.length; i++) { %>
 				<option value="<%= wordsOrigen[i].id %>"><%= wordsOrigen[i].word %> (<%= wordsOrigen[i].aception %>)
@@ -11,7 +11,7 @@
 				<% } %>
 			</select>
 		<p>
-			<label for="word2">DESTINO "<%= wordsDestino[0].langue %>":</label><br>
+			<label for="word2">DESTINO "<%= destinoLang %>":</label><br>
 			<select name="word2" size="<%= sizeSelect %>" required>
 				<% for(var i = 0; i < wordsDestino.length; i++) { %>
 				<option value="<%= wordsDestino[i].id %>"><%= wordsDestino[i].word %> (<%= wordsDestino[i].aception %>)

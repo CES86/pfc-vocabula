@@ -2,20 +2,23 @@ var models = require('../models/models.js');
 
 // Get /   -- Formulario de login
 exports.showTranslations = function (req, res) {
-	models.Translation.findAndCountAll({
+	models.Translation.findAll({
+			attributes: ['Word1Id', 'Word2Id'],
 			include: [
 				{
 					model: models.Word,
-					as: 'Word1'
+					as: 'Word1',
+					attributes: ['langue', 'word', 'aception']
 				},
 				{
 					model: models.Word,
-					as: 'Word2'
+					as: 'Word2',
+					attributes: ['langue', 'word', 'aception']
 				}]
 		}
 	).then(function (translations) {
 		res.render('translation/index', {
-			translations: translations.rows,
+			translations: translations,
 			errors: []
 		});
 	});
@@ -33,19 +36,25 @@ exports.newTranslation = function (req, res) {
 	req.session.errors = {};
 	if (req.query.origen != req.query.destino) {
 		var errorOrigen, errorDestino;
-		models.Word.findAndCountAll({
+		models.Word.findAll({
 			where: {
 				langue: req.query.origen
-			}
+			},
+			attributes: ['id', 'word', 'aception'],
+			order: [['word', 'ASC']]
 		}).then(function (wordsOrigen) {
-			models.Word.findAndCountAll({
+			models.Word.findAll({
 				where: {
 					langue: req.query.destino
-				}
+				},
+				attributes: ['id', 'word', 'aception'],
+				order: [['word', 'ASC']]
 			}).then(function (wordsDestino) {
 				res.render('translation/new', {
-					wordsOrigen: wordsOrigen.rows,
-					wordsDestino: wordsDestino.rows,
+					origenLang: req.query.origen,
+					destinoLang: req.query.destino,
+					wordsOrigen: wordsOrigen,
+					wordsDestino: wordsDestino,
 					errors: []
 				});
 			})
@@ -74,7 +83,8 @@ exports.create = function (req, res) {
 					Word2Id: req.body.word1
 				},
 			]
-		}
+		},
+		attributes: []
 	}).then(function (busqueda) {
 		if (!busqueda) {
 			var translation = models.Translation.build({
@@ -100,20 +110,22 @@ exports.create = function (req, res) {
 				next(error)
 			});
 		} else
-			models.Translation.findAndCountAll({
+			models.Translation.findAll({
 					include: [
 						{
 							model: models.Word,
-							as: 'Word1'
+							as: 'Word1',
+							attributes: ['langue', 'word', 'aception']
 						},
 						{
 							model: models.Word,
-							as: 'Word2'
+							as: 'Word2',
+							attributes: ['langue', 'word', 'aception']
 						}]
 				}
 			).then(function (translations) {
 				res.render('translation/index', {
-					translations: translations.rows,
+					translations: translations,
 					errors: [new Error("Esa traducción ya estaba presente en la BD")]
 				});
 			});
