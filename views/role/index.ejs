@@ -1,0 +1,20 @@
+<% var isAdmin = user.isAdmin %>
+<% var isTeacher = user.isTeacher || isAdmin %>
+<% var isStudent = !isTeacher %>
+<% include _head.ejs %>
+<% if(isTeacher){ %>
+<% if(isAdmin){ %>
+<br>
+<a href="/user">Gestión de USUARIOS</a>
+<br>
+<% } %>
+<% include _teacher.ejs %>
+<% if(isAdmin){ %>
+<br>
+<a href="/mant">MANTENIMIENTO del SISTEMA</a>
+<br>
+<% } %>
+<% } %>
+<% if(isStudent){ %>
+<% include _student.ejs %>
+<% } %>

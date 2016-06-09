@@ -1,5 +1,30 @@
 var models = require('../models/models.js');
 
+// Get /   -- Formulario de login
+exports.showUsers = function (req, res) {
+	models.User.findAll({
+		where: {
+			isAdmin: false,
+			isTeacher: false
+		},
+		attributes: ['username', 'firstName', 'lastName']
+	}).then(function (students) {
+		models.User.findAll({
+			where: {
+				isAdmin: false,
+				isTeacher: true
+			},
+			attributes: ['username', 'firstName', 'lastName']
+		}).then(function (teachers) {
+			res.render('user/index', {
+				students: students,
+				teachers: teachers,
+				errors: []
+			});
+		})
+	});
+};
+
 // Get /new   -- Formulario de login
 exports.newUser = function (req, res) {
 	var errors = req.session.errors || {};
@@ -163,41 +188,10 @@ exports.destroy = function (req, res) {
 
 // GET /user/:id
 exports.menu = function (req, res, next) {
-	var userSession = req.session.user;
 	var userURL = req.user;
-
-	if (userURL.isAdmin) {
-		models.User.findAll({
-			where: {
-				isAdmin: false,
-				isTeacher: false
-			},
-			attributes: ['username', 'firstName', 'lastName']
-		}).then(function (students) {
-			models.User.findAll({
-				where: {
-					isAdmin: false,
-					isTeacher: true
-				},
-				attributes: ['username', 'firstName', 'lastName']
-			}).then(function (teachers) {
-				res.render('user/indexAdmin', {
-					user: userURL,
-					students: students,
-					teachers: teachers,
-					errors: []
-				});
-			})
-		});
-	}
-	else if (userURL.isTeacher) {
-		res.render('user/indexTeacher', {
-			user: userURL,
-			errors: []
-		});
-	}
-	else {
-		res.render('user/indexStudent', {errors: []});
-	}
+	res.render('role/index', {
+		user: userURL,
+		errors: []
+	});
 }
 ;

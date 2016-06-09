@@ -7,11 +7,8 @@ var sessionControl = require('../controllers/session_control');
 var userControl = require('../controllers/user_control');
 var upLoadControl = require('../controllers/upload_control');
 
-/* GET user listing. */
-router.get('/', sessionControl.loginRequired, function (req, res, next) {
-	res.redirect('/user/' + req.session.user.username);
-	//res.render('user/index', {errors: []});
-});
+// Definición de rutas de Usuario [sobre el Path "/user/*"]
+router.get('/', sessionControl.loginAdminRequired, userControl.showUsers);
 
 // Autoload de comandos con 'username'
 router.param('userName', userControl.load);  // autoload :userName
