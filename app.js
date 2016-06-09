@@ -12,6 +12,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var words = require('./routes/words');
 var translations = require('./routes/translations');
+var exercises = require('./routes/exercises');
 
 var app = express();
 
@@ -45,7 +46,7 @@ app.use(function (req, res, next) {
 	}
 
 	// guardar path en user.redir para despues de login
-	if (!req.path.match(/\/login|\/logout|\/new|\/edit|\/upload|\/add/)) {
+	if (!req.path.match(/\/login|\/logout|\/user|\/new|\/edit|\/upload|\/add/)) {
 		req.session.redir = req.path;
 	}
 
@@ -60,6 +61,7 @@ app.use('/', routes);
 app.use('/user', users);
 app.use('/word', words);
 app.use('/translation', translations);
+app.use('/exercise', exercises);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -1,0 +1,45 @@
+<% var sizeSelect = 5 %>
+<% var s = " &#x279c; " %>
+<form method="post" action="/exercise/new">
+	<fieldset>
+		<legend><p>Crear traducción nueva</p></legend>
+		<% include _question.ejs %>
+		<fieldset>
+			<legend><p>Elija UNA traducción</p></legend>
+			<label for="translation"><%= destinoLang %><%- s %><%= origenLang %>
+				& <%= origenLang %><%- s %><%= destinoLang %>:</label><br>
+			<select name="translation" size="<%= sizeSelect %>" required>
+				<% for(var i = 0; i < translations.length; i++) { %>
+				<option value="<%= translations[i].id %>">
+					<%= translations[i].Word1.word %> (<%= translations[i].Word1.aception %>)
+					<%- s %>
+					<%= translations[i].Word2.word %> (<%= translations[i].Word2.aception %>)
+				</option>
+				<% } %>
+			</select>
+			<p>
+		</fieldset>
+		<% if(!(type == '1' | type == '2')) { %>
+		<fieldset>
+			<legend><p>Seleccione la/s traduccion/es Extra/s para el ejercicio (Use la tecla Ctrl)</p></legend>
+			<label for="extra"><%= destinoLang %><%- s %><%= origenLang %>
+				& <%= origenLang %><%- s %><%= destinoLang %>:</label><br>
+			<select name="extra" size="<%= sizeSelect %>" multiple required>
+				<% for(var i = 0; i < translations.length; i++) { %>
+				<option value="<%= translations[i].id %>">
+					<%= translations[i].Word1.word %> (<%= translations[i].Word1.aception %>)
+					<%- s %>
+					<%= translations[i].Word2.word %> (<%= translations[i].Word2.aception %>)
+				</option>
+				<% } %>
+			</select>
+			<p>
+		</fieldset>
+		<% } %>
+		<input type="hidden" name="type" value="<%= type %>">
+		<a href="<%= session ? session.redir : '/' %>">
+			<button type="button">Volver</button>
+		</a>
+		<input type="submit" value="Enviar">
+	</fieldset>
+</form>

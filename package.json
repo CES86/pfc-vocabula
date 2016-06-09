@@ -1,6 +1,6 @@
 {
   "name": "PFCvocabula",
-  "version": "v0.0.7c",
+  "version": "v0.0.8",
   "private": true,
   "scripts": {
 	"start": "node ./bin/www"

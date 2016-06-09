@@ -10,7 +10,7 @@ var Sequelize = require('sequelize');
 
 // // Postgres DATABASE_URL = postgres://user:passwd@host:port/database
 // // SQLite   DATABASE_URL = sqlite://:@:/
-// var url = process.env.DATABASE_URL.match(/(.*)\:\/\/(.*?)\:(.*)@(.*)\:(.*)\/(.*)/);
+// var url = process.env.DATABASE_URL_SQLITE.match(/(.*)\:\/\/(.*?)\:(.*)@(.*)\:(.*)\/(.*)/);
 // var DB_name = (url[6] || null);
 // var user = (url[2] || null);
 // var pwd = (url[3] || null);
@@ -83,7 +83,6 @@ Statistics.hasOne(User);
 Word.belongsTo(User);
 User.hasMany(Word);
 
-Exercise.belongsTo(User);
 User.hasMany(Exercise);
 
 Pack.belongsTo(User);
@@ -95,10 +94,19 @@ Translation.belongsTo(Word, {as: 'Word2', onDelete: 'CASCADE'});
 Translation.belongsTo(User);
 
 Exercise.belongsTo(Translation);
+Exercise.belongsTo(User);
 
-Translation.belongsToMany(Exercise, {through: ExtraEx});
-Exercise.belongsToMany(Pack, {through: PackEx});
-Pack.belongsToMany(User, {through: PackStudent});
+// Exercise.belongsToMany(Translation, {through: ExtraEx});
+ExtraEx.belongsTo(Exercise, {as: 'Exercise', onDelete: 'CASCADE', primaryKey: true});
+ExtraEx.belongsTo(Translation, {as: 'Translation', onDelete: 'CASCADE'});
+
+// Exercise.belongsToMany(Pack, {through: PackEx});
+PackEx.belongsTo(Exercise, {as: 'Exercise', onDelete: 'CASCADE'});
+PackEx.belongsTo(Pack, {as: 'Pack', onDelete: 'CASCADE'});
+
+// Pack.belongsToMany(User, {through: PackStudent});
+PackStudent.belongsTo(Pack, {as: 'Pack', onDelete: 'CASCADE'});
+PackStudent.belongsTo(User, {as: 'User', onDelete: 'CASCADE'});
 
 User.hasMany(LOG);
 Exercise.hasMany(LOG);
