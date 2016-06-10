@@ -14,7 +14,21 @@ module.exports = function (sequelize, DataTypes) {
 			typeEx: {
 				type: DataTypes.INTEGER,
 				allowNull: false,
-				defaultValue: 0
+				defaultValue: 0,
+				get: function () {
+					switch (this.getDataValue('typeEx')) {
+						case 1:
+							return 'Trust';
+						case 2:
+							return 'Write';
+						case 3:
+							return 'Select';
+						case 4:
+							return 'Relation';
+						default:
+							return this.getDataValue('typeEx');
+					}
+				}
 			}
 		}
 	);

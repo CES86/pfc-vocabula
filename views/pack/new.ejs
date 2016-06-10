@@ -1,0 +1,33 @@
+<% var sizeSelect = 5 %>
+<% var s = " &#x279c; " %>
+<form method="post" action="/pack/new">
+	<fieldset>
+		<legend><p>Crear un paquete nuevo</p></legend>
+		<p>
+			<label for="title">Título*:</label>
+			<input type="text" id="title" name="title" placeholder="Paquete alumnos Inglés 1..." required/>
+		<p>
+			<label for="description">Descripción:</label>
+			<input type="text" id="description" name="description" placeholder="Descripción"/>
+		<p>
+			<fieldset>
+				<legend>
+		<p>Seleccione el/los ejercicio/s para el nuevo PACK (Use la tecla Ctrl)</p></legend>
+		<label for="exSelected"><%= destinoLang %><%- s %><%= origenLang %>
+			& <%= origenLang %><%- s %><%= destinoLang %>:</label><br>
+		<select name="exSelected" size="<%= sizeSelect %>" multiple required>
+			<% for(var i = 0; i < exercises.length; i++) { %>
+			<option value="<%= exercises[i].id %>">
+				[<%= exercises[i].get('typeEx') %>]
+				[<%= exercises[i].qstnLang %><%- s %>???]
+				<%= exercises[i].Translation.Word1.word %> (<%= exercises[i].Translation.Word1.aception %>)
+				<%- s %>
+				<%= exercises[i].Translation.Word2.word %> (<%= exercises[i].Translation.Word2.aception %>)
+			</option>
+			<% } %>
+		</select>
+		<p>
+	</fieldset>
+	<% include ../includes/_buttons.ejs %>
+	</fieldset>
+</form>

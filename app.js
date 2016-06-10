@@ -13,6 +13,7 @@ var users = require('./routes/users');
 var words = require('./routes/words');
 var translations = require('./routes/translations');
 var exercises = require('./routes/exercises');
+var packs = require('./routes/packs');
 
 var app = express();
 
@@ -62,6 +63,7 @@ app.use('/user', users);
 app.use('/word', words);
 app.use('/translation', translations);
 app.use('/exercise', exercises);
+app.use('/pack', packs);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

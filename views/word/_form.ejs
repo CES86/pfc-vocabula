@@ -18,7 +18,4 @@
 <p>
 	<input type="hidden" id="UserId" name="UserId" value="<%= session.user.id %>" required/>
 <p>
-	<a href="<%= session ? session.redir : '/' %>">
-		<button type="button">Volver</button>
-	</a>
-	<input type="submit" value="Enviar">
+<% include ../includes/_buttons.ejs %>

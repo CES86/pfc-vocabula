@@ -25,9 +25,15 @@ exports.showExercises = function (req, res) {
 	}).then(function (exercises) {
 		res.render('exercise/index', {
 			exercises: exercises,
+			pack: null,
 			errors: []
 		});
 	});
+};
+
+// GET /user/:id/edit
+exports.showPackExercises = function (req, res) {
+	res.render('exercise/index', {exercises: req.exercises, pack: req.pack, errors: []}); // req.user: instancia de user cargada con autoload
 };
 
 // Get /add   -- Formulario de seleccion de lenguas
@@ -160,7 +166,7 @@ exports.load = function (req, res, next, exerciseId) {
 					next();
 				});
 			} else {
-				next(new Error('No existen datos para este Exercise = ' + exercise))
+				next(new Error('No existen datos para este Exercise = ' + exerciseId))
 			}
 		}
 	).catch(function (error) {

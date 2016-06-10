@@ -21,15 +21,17 @@
 			- <a href="/user/<%= session.user.username %>/edit">Editar</a>
 			- <a href="/user/logout">Salir</a></span>
 		<% } %>
-
+		<% if(!session.user){ %>
 		<h2>Bienvenid@ a <span>PFC-Vocabula</span></h2>
+		<% } %>
 	</header>
 
 	<nav class="main" id="n1" role="navigation">
-		<span><a href="/">Inicio</a></span>
-		<% if(session.user){ %>
-		<span><a href="/user/<%= session.user.username %>">Perfil</a></span>
-		<% } %>
+		<h4><span><a href="/">Inicio</a></span>
+			<% if(session.user){ %>
+			<span><a href="/user/<%= session.user.username %>">Perfil</a></span>
+			<% } %>
+		</h4>
 	</nav>
 
 	<section class="main" id="s1">
