@@ -17,7 +17,5 @@
 		<% } %>
 	</select>
 <p>
-	<a href="<%= session ? session.redir : '/' %>">
-		<button type="button">Volver</button>
-	</a>
-	<input type="submit" value="Continuar">
+	<a class="btn btn-default" href="<%= session ? session.redir : '/' %>" role="button">Volver</a>
+	<input class="btn btn-primary" type="submit" value="Continuar">

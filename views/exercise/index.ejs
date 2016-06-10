@@ -50,12 +50,13 @@
 		<td>
 			<%= exercises[i].User.username %>
 		</td>
-		<% if(!(exercises[i].typeEx == '1' | exercises[i].typeEx == '2')) { %>
-		<td><a href="/exercise/<%= exercises[i].id %>/detail">
+		<td>
+			<% if(exercises[i].haveDetail()) { %>
+			<a href="/exercise/<%= exercises[i].id %>/detail">
 				<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"/> </span>
 			</a>
+			<% } %>
 		</td>
-		<% } %>
 	</tr>
 	<% } %>
 </table>

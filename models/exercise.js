@@ -30,6 +30,14 @@ module.exports = function (sequelize, DataTypes) {
 					}
 				}
 			}
+		},
+		{
+			instanceMethods: {
+				haveDetail: function () {
+					var a = this.typeEx;
+					return (a == 'Select' || a == 'Relation');
+				}
+			}
 		}
 	);
 	return Exercise;
