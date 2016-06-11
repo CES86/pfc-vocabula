@@ -2,6 +2,25 @@ var models = require('../models/models.js');
 
 // Get /   -- Formulario de login
 exports.showUsers = function (req, res) {
+	res.render('user/index', {errors: []});
+};
+
+exports.showTeachers = function (req, res) {
+	models.User.findAll({
+		where: {
+			isAdmin: false,
+			isTeacher: true
+		},
+		attributes: ['username', 'firstName', 'lastName']
+	}).then(function (teachers) {
+		res.render('user/teachers', {
+			teachers: teachers,
+			errors: []
+		});
+	});
+};
+
+exports.showStudents = function (req, res) {
 	models.User.findAll({
 		where: {
 			isAdmin: false,
@@ -9,19 +28,11 @@ exports.showUsers = function (req, res) {
 		},
 		attributes: ['username', 'firstName', 'lastName']
 	}).then(function (students) {
-		models.User.findAll({
-			where: {
-				isAdmin: false,
-				isTeacher: true
-			},
-			attributes: ['username', 'firstName', 'lastName']
-		}).then(function (teachers) {
-			res.render('user/index', {
-				students: students,
-				teachers: teachers,
-				errors: []
-			});
-		})
+		res.render('user/students', {
+			students: students,
+			group: null,
+			errors: []
+		});
 	});
 };
 

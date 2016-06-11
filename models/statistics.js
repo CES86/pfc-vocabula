@@ -18,7 +18,7 @@ module.exports = function (sequelize, DataTypes) {
 				allowNull: true,
 				defaultValue: null
 			}
-		}
+		}, {timestamps: false}
 	);
 	return Statistics;
 }

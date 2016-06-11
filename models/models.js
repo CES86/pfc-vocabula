@@ -74,29 +74,32 @@ var LOG = sequelize.import(log_path);
 //ASOCIACIÓN DE TABLAS
 //====================
 
-User.hasMany(ClassGroup, {constraints: false});//mete UserId como FK en ClassGroup pero no referenciado
-ClassGroup.hasMany(User);//mete ClassGroupId como FK en User, {constraints: false});
-// ClassGroup.belongsToMany(User, {as: 'Group', through: 'Students'});
+ClassGroup.belongsTo(User);//mete UserId como FK en ClassGroup
+// User.hasMany(ClassGroup);
+
+ClassGroup.hasMany(User, {constraints: false});//mete ClassGroupId como FK en User pero no referenciado
 
 Statistics.hasOne(User);
 
-Word.belongsTo(User);
-User.hasMany(Word);
+Word.belongsTo(User);	//esto permite, dada una Word averiguar EL USER que está asociado a esa Word
+User.hasMany(Word);		//esto permitiria, dado un User averiguar que Word/s esta/n asociada/s a él
 
-User.hasMany(Exercise);
 
 Pack.belongsTo(User);
 User.hasMany(Pack);
 
 //Word.belongsToMany(Word, {as: 'Translated', through: Translation});
+//no nos interesa que las FK sean PK, dan problemas al ser referenciadas como FK de otras tablas
 Translation.belongsTo(Word, {as: 'Word1', onDelete: 'CASCADE'});
 Translation.belongsTo(Word, {as: 'Word2', onDelete: 'CASCADE'});
 Translation.belongsTo(User);
 
 Exercise.belongsTo(Translation);
-Exercise.belongsTo(User);
+Exercise.belongsTo(User);	//esto permite, dada un Exercise averiguar EL USER que está asociado a ese Exercise
+User.hasMany(Exercise);		//esto permitiria, dado un User averiguar que Exercise/s esta/n asociado/s a él
 
 // Exercise.belongsToMany(Translation, {through: ExtraEx});
+// Sequelize da problemas al referenciar con belongsToMany.
 ExtraEx.belongsTo(Exercise, {as: 'Exercise', onDelete: 'CASCADE', primaryKey: true});
 ExtraEx.belongsTo(Translation, {as: 'Translation', onDelete: 'CASCADE'});
 

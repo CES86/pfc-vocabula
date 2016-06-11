@@ -2,10 +2,10 @@
 <% var s = " &#x279c; " %>
 <form method="post" action="/exercise/new">
 	<fieldset>
-		<legend><p>Crear traducción nueva</p></legend>
+		<legend>Crear traducción nueva</legend>
 		<% include _question.ejs %>
 		<fieldset>
-			<legend><p>Elija UNA traducción</p></legend>
+			<legend>Elija UNA traducción</legend>
 			<label for="translation"><%= destinoLang %><%- s %><%= origenLang %>
 				& <%= origenLang %><%- s %><%= destinoLang %>:</label><br>
 			<select name="translation" size="<%= sizeSelect %>" required>
@@ -17,11 +17,10 @@
 				</option>
 				<% } %>
 			</select>
-			<p>
 		</fieldset>
 		<% if(!(type == '1' | type == '2')) { %>
 		<fieldset>
-			<legend><p>Seleccione la/s traduccion/es Extra/s para el ejercicio (Use la tecla Ctrl)</p></legend>
+			<legend>Seleccione la/s traduccion/es Extra/s para el ejercicio (Use la tecla Ctrl)</legend>
 			<label for="extra"><%= destinoLang %><%- s %><%= origenLang %>
 				& <%= origenLang %><%- s %><%= destinoLang %>:</label><br>
 			<select name="extra" size="<%= sizeSelect %>" multiple required>
@@ -33,7 +32,6 @@
 				</option>
 				<% } %>
 			</select>
-			<p>
 		</fieldset>
 		<% } %>
 		<input type="hidden" name="type" value="<%= type %>">

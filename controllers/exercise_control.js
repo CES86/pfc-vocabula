@@ -113,7 +113,7 @@ exports.createExercise = function (req, res) {
 		}
 		res.redirect(req.session.redir.toString());
 	}).catch(function (error) {
-		res.render('exercise', {translation: translation, errors: error.errors});
+		res.render('exercise/new', {exercise: exercise, errors: error.errors});
 	});
 }
 

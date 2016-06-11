@@ -15,7 +15,7 @@ module.exports = function (sequelize, DataTypes) {
 				type: DataTypes.REAL,
 				allowNull: false,
 				defaultValue: 0.0
-			},
+			}
 		}
 	);
 	return LOG;

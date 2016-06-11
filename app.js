@@ -14,6 +14,7 @@ var words = require('./routes/words');
 var translations = require('./routes/translations');
 var exercises = require('./routes/exercises');
 var packs = require('./routes/packs');
+var groups = require('./routes/groups');
 
 var app = express();
 
@@ -64,6 +65,7 @@ app.use('/word', words);
 app.use('/translation', translations);
 app.use('/exercise', exercises);
 app.use('/pack', packs);
+app.use('/group', groups);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

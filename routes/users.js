@@ -6,12 +6,16 @@ var router = express.Router();
 var sessionControl = require('../controllers/session_control');
 var userControl = require('../controllers/user_control');
 var upLoadControl = require('../controllers/upload_control');
+var groupControl = require('../controllers/group_control');
 
 // Definición de rutas de Usuario [sobre el Path "/user/*"]
 router.get('/', sessionControl.loginAdminRequired, userControl.showUsers);
+router.get('/teachers', sessionControl.loginAdminRequired, userControl.showTeachers);
+router.get('/students', sessionControl.loginAdminRequired, userControl.showStudents);
 
 // Autoload de comandos con 'username'
 router.param('userName', userControl.load);  // autoload :userName
+router.param('groupId', groupControl.load);  // autoload :userName
 
 // Definición de rutas de Sesion [sobre el Path "/user/*"]
 router.get('/login', sessionControl.NOTloginRequired, sessionControl.new);		// formulario login
@@ -30,5 +34,6 @@ router.put('/:userName([a-zA-Z]+)', sessionControl.loginRequired, userControl.ow
 router.get('/:userName([a-zA-Z]+)', sessionControl.loginRequired, userControl.ownershipRequired, userControl.menu);				// actualizar información de cuenta
 router.delete('/:userName([a-zA-Z]+)', sessionControl.loginRequired, userControl.ownershipRequired, userControl.destroy);		// borrar cuenta
 
+router.get('/group/:groupId(\\d+)', sessionControl.loginTeacherRequired, groupControl.detailGroup);
 
 module.exports = router;

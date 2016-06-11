@@ -10,6 +10,18 @@ module.exports = function (sequelize, DataTypes) {
 				allowNull: false,
 				isAlpha: true,
 				unique: 'wordUnique',
+				// get: function () {
+				// 	switch (this.getDataValue('langue')) {
+				// 		case 'EN':
+				// 			return 'ENglish';
+				// 		case 'FR':
+				// 			return 'FRançais';
+				// 		case 'ES':
+				// 			return 'ESpañol';
+				// 		default:
+				// 			return this.getDataValue('langue');
+				// 	}
+				// },
 				validate: {
 					notEmpty: {msg: "-> Falta idioma"}
 				}
@@ -32,23 +44,7 @@ module.exports = function (sequelize, DataTypes) {
 					notEmpty: {msg: "-> Falta acepción"}
 				}
 			}
-		},
-		{
-			// instanceMethods: {
-			// 	isUnique: function (callback) {
-			// 		Word.find({where: {langue: this.langue, word: this.word, aception: this.aception}})
-			// 			.then(function (word) {
-			// 				if (word != null) {
-			// 					callback(new Error('Palabra ya utilizada.'));
-			// 				}
-			// 				callback(null);
-			// 			})
-			// 			.catch(function (error) {
-			// 				callback(error);
-			// 			});
-			// 	}
-			// }
-		}
+		}, {timestamps: false, createdAt: true}
 	);
 	return Word;
 }

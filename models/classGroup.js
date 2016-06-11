@@ -3,6 +3,11 @@ var models = require('../models/models.js');
 // Definicion del modelo de Word
 module.exports = function (sequelize, DataTypes) {
 	var ClassGroup = sequelize.define('ClassGroup', {
+			name: {
+				type: DataTypes.STRING,
+				allowNull: true,
+				isAlpha: true,
+			},
 			langTranslation: {
 				type: DataTypes.STRING(4),
 				allowNull: false,
@@ -11,7 +16,7 @@ module.exports = function (sequelize, DataTypes) {
 					notEmpty: {msg: "-> Falta idioma para el grupo"}
 				}
 			}
-		}
+		}, {timestamps: false, createdAt: true}
 	);
 	return ClassGroup;
 }

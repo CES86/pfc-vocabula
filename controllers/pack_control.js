@@ -109,7 +109,7 @@ exports.createPack = function (req, res) {
 		}
 		res.redirect(req.session.redir.toString());
 	}).catch(function (error) {
-		res.render('exercise', {translation: translation, errors: error.errors});
+		res.render('pack/new', {pack: pack, errors: error.errors});
 	});
 }
 

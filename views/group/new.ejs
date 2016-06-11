@@ -1,0 +1,22 @@
+<% var sizeSelect = 5 %>
+<% var s = " &#x279c; " %>
+<form method="post" action="/group/new">
+	<fieldset>
+		<legend>Crear un GRUPO nuevo</legend>
+		<p>
+			<label for="name">Nombre*:</label>
+			<input type="text" id="name" name="name" placeholder="Nombre de la Clase" required/>
+		</p>
+		<fieldset>
+			<legend> Seleccione l@s estudiantes para el nuevo GRUPO (Use la tecla Ctrl)</legend>
+			<label for="stSelected"><%= origenLang %><%- s %><%= destinoLang %>:</label><br>
+			<select name="stSelected" size="<%= sizeSelect %>" multiple required>
+				<% for(var i = 0; i < students.length; i++) { %>
+				<option value="<%= students[i].id %>"><%= students[i].username %></option>
+				<% } %>
+			</select>
+		</fieldset>
+		<input type="hidden" name="langTranslation" value="<%= origenLang + destinoLang %>">
+		<% include ../includes/_buttons.ejs %>
+	</fieldset>
+</form>
