@@ -32,7 +32,8 @@ module.exports = function (sequelize, DataTypes) {
 			}
 		},
 		{
-			timestamps: false, createdAt: true,
+			timestamps: true,
+			updatedAt: false,
 			instanceMethods: {
 				haveDetail: function () {
 					var a = this.typeEx;

@@ -16,6 +16,9 @@ module.exports = function (sequelize, DataTypes) {
 				allowNull: false,
 				defaultValue: 0.0
 			}
+		}, {
+			timestamps: true,
+			updatedAt: false
 		}
 	);
 	return LOG;

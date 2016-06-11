@@ -11,6 +11,9 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.STRING,
 			allowNull: true
 		}
-	}, {timestamps: false, createdAt: true});
+	}, {
+		timestamps: true,
+		updatedAt: false
+	});
 	return Pack;
 }

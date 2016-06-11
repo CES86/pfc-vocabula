@@ -44,7 +44,10 @@ module.exports = function (sequelize, DataTypes) {
 					notEmpty: {msg: "-> Falta acepción"}
 				}
 			}
-		}, {timestamps: false, createdAt: true}
+		}, {
+			timestamps: true,
+			updatedAt: false
+		}
 	);
 	return Word;
 }
