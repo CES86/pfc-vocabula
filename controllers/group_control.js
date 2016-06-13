@@ -75,7 +75,7 @@ exports.createGroup = function (req, res) {
 		models.User.update({ClassGroupId: result.id},
 			{where: {id: {$in: req.body.stSelected}}}
 		).then(function (x) {
-			res.redirect(req.session.redir.toString());
+			res.redirect('/group');
 		});
 	}).catch(function (error) {
 		res.render('group/new', {group: group, errors: error.errors});
@@ -93,24 +93,8 @@ exports.load = function (req, res, next, groupId) {
 		}]
 	}).then(function (group) {
 		if (group) {
-			models.User.findAll({
-					where: {
-						ClassGroupId: groupId,
-						isAdmin: false,
-						isTeacher: false
-					},
-					attributes: ['id', 'username', 'firstName', 'lastName'],
-				}
-			).then(function (students) {
-				if (students) {
-					req.group = group;
-					req.students = students;
-					next();
-				}
-				else {
-					next(new Error('No existen Alumnos para este Grupo = ' + groupId))
-				}
-			});
+			req.group = group;
+			next();
 		}
 		else {
 			next(new Error('No existen datos para este Grupo = ' + groupId))
@@ -119,7 +103,3 @@ exports.load = function (req, res, next, groupId) {
 };
 
 
-// GET /user/:id/edit
-exports.detailGroup = function (req, res) {
-	res.render('user/students', {students: req.students, group: req.group, errors: []}); // req.user: instancia de user cargada con autoload
-};

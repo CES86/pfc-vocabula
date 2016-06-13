@@ -3,7 +3,7 @@ var models = require('../models/models.js');
 // Get /   -- Formulario de login
 exports.showPacks = function (req, res) {
 	models.Pack.findAll({
-		attributes: ['id', 'title', 'description', 'UserId'],
+		attributes: ['id', 'langTranslation', 'title', 'description', 'UserId'],
 		include: [{
 			model: models.User,
 			as: 'User',
@@ -88,18 +88,18 @@ exports.newPack = function (req, res) {
 				errors: [new Error("Elija distinto idioma para Destino y Origen")]
 			});
 		});
-}
-;
+};
 
 // POST /word
 exports.createPack = function (req, res) {
 	var pack = models.Pack.build({
+		langTranslation: req.body.origenLang + req.body.destinoLang,
 		title: req.body.title,
 		description: req.body.description || null,
 		UserId: req.session.user.id
 	});
 	pack.save({
-		fields: ["title", "description", "UserId"]
+		fields: ["langTranslation", "title", "description", "UserId"]
 	}).then(function (result) {
 		for (var i = 0; i < req.body.exSelected.length; i++) {
 			models.PackEx.build({
@@ -107,15 +107,16 @@ exports.createPack = function (req, res) {
 				ExerciseId: req.body.exSelected[i]
 			}).save({fields: ["PackId", "ExerciseId"]});
 		}
-		res.redirect(req.session.redir.toString());
+		res.redirect('/pack');
 	}).catch(function (error) {
-		res.render('pack/new', {pack: pack, errors: error.errors});
+		res.render('pack/new', {pack: pack, langTranslation: langTranslation, errors: error.errors});
 	});
-}
+};
 
 // Autoload :id
 exports.load = function (req, res, next, packId) {
 	models.Pack.findByPrimary(packId, {
+		attributes: ['id', 'langTranslation', 'title', 'description', 'UserId'],
 		include: [{
 			model: models.User,
 			as: 'User',
@@ -123,81 +124,15 @@ exports.load = function (req, res, next, packId) {
 		}]
 	}).then(function (pack) {
 		if (pack) {
-			models.PackEx.findAll({
-				where: {
-					PackId: packId
-				},
-				attributes: ['ExerciseId']
-				//ESTO DE ABAJO FUNCIONA GENIAL!!!
-				// Pero no me interesa para aprovechar la vista de Ejercicios para mostrar los detalles del PackEx
-
-				// include: [{
-				// 	attributes: ['id', 'qstnLang', 'typeEx'],
-				// 	model: models.Exercise,
-				// 	as: 'Exercise',
-				// 	include: [{
-				// 		attributes: ['Word1Id', 'Word2Id'],
-				// 		model: models.Translation,
-				// 		as: 'Translation',
-				// 		include: [{
-				// 			attributes: ['langue', 'word', 'aception'],
-				// 			model: models.Word,
-				// 			as: 'Word1'
-				// 		}, {
-				// 			attributes: ['langue', 'word', 'aception'],
-				// 			model: models.Word,
-				// 			as: 'Word2'
-				// 		}]
-				// 	}, {
-				// 		model: models.User,
-				// 		as: 'User',
-				// 		attributes: ['username']
-				// 	}]
-				// }]
-			}).then(function (packEx) {
-				if (packEx) {
-					var exos = [];
-					for (var i = 0; i < packEx.length; i++) {
-						exos.push(packEx[i].ExerciseId);
-					}
-					models.Exercise.findAll({
-						where: {
-							id: {$in: exos}
-						},
-						attributes: ['id', 'qstnLang', 'typeEx'],
-						include: [{
-							attributes: ['Word1Id', 'Word2Id'],
-							model: models.Translation,
-							as: 'Translation',
-							include: [{
-								attributes: ['langue', 'word', 'aception'],
-								model: models.Word,
-								as: 'Word1'
-							}, {
-								attributes: ['langue', 'word', 'aception'],
-								model: models.Word,
-								as: 'Word2'
-							}]
-						}, {
-							model: models.User,
-							as: 'User',
-							attributes: ['username']
-						}]
-					}).then(function (exercises) {
-						req.pack = pack;
-						req.exercises = exercises;
-						next();
-					});
-				}
-				else {
-					next(new Error('No existen Ejercicios para este Pack = ' + packId))
-				}
-			}).catch(function (error) {
-				next(error)
-			});
+			req.pack = pack;
+			next();
 		}
 		else {
 			next(new Error('No existen datos para este Pack = ' + packId))
 		}
+	}).catch(function (error) {
+		next(error)
 	});
 };
+
+

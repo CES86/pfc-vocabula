@@ -1,5 +1,5 @@
 <% var sizeSelect = 5 %>
-<% var s = " &#x279c; " %>
+<% var  arrow1way= " &#x21c9; " %>
 <form method="post" action="/group/new">
 	<fieldset>
 		<legend>Crear un GRUPO nuevo</legend>
@@ -9,7 +9,7 @@
 		</p>
 		<fieldset>
 			<legend> Seleccione l@s estudiantes para el nuevo GRUPO (Use la tecla Ctrl)</legend>
-			<label for="stSelected"><%= origenLang %><%- s %><%= destinoLang %>:</label><br>
+			<label for="stSelected"><%= origenLang %><%-  arrow1way%><%= destinoLang %>:</label><br>
 			<select name="stSelected" size="<%= sizeSelect %>" multiple required>
 				<% for(var i = 0; i < students.length; i++) { %>
 				<option value="<%= students[i].id %>"><%= students[i].username %></option>

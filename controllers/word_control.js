@@ -4,7 +4,7 @@ var models = require('../models/models.js');
 exports.showWords = function (req, res) {
 	models.Word.findAll({
 		attributes: ['langue', 'word', 'aception'],
-		order: [['langue', 'ASC'],['word', 'ASC']]
+		order: [['langue', 'ASC'], ['word', 'ASC']]
 	}).then(function (words) {
 		res.render('word/index', {
 			words: words,
@@ -32,7 +32,7 @@ exports.create = function (req, res) {
 			} else {
 				// save: guarda en DB campos username y password de user
 				word.save({fields: ["langue", "word", "aception", "UserId"]}).then(function () {
-					res.redirect(req.session.redir.toString());
+					res.redirect('/word');
 				}).catch(function (error) {
 					res.render('word/new', {word: word, errors: error.errors});
 				});
@@ -48,7 +48,7 @@ exports.create = function (req, res) {
 exports.uploadWordLot = function (req, res) {
 	//Analizar el archivo!
 	models.parseWordLot(req.file.path, req.session.user.id);
-	res.redirect(req.session.redir.toString());
+	res.redirect('/word');
 };
 
 

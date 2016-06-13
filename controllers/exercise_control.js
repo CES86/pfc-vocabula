@@ -33,7 +33,73 @@ exports.showExercises = function (req, res) {
 
 // GET /user/:id/edit
 exports.showPackExercises = function (req, res) {
-	res.render('exercise/index', {exercises: req.exercises, pack: req.pack, errors: []}); // req.user: instancia de user cargada con autoload
+	models.PackEx.findAll({
+		where: {
+			PackId: req.pack.id
+		},
+		attributes: ['ExerciseId']
+		//ESTO DE ABAJO FUNCIONA GENIAL!!!
+		// Pero no me interesa para aprovechar la vista de Ejercicios para mostrar los detalles del PackEx
+
+		// include: [{
+		// 	attributes: ['id', 'qstnLang', 'typeEx'],
+		// 	model: models.Exercise,
+		// 	as: 'Exercise',
+		// 	include: [{
+		// 		attributes: ['Word1Id', 'Word2Id'],
+		// 		model: models.Translation,
+		// 		as: 'Translation',
+		// 		include: [{
+		// 			attributes: ['langue', 'word', 'aception'],
+		// 			model: models.Word,
+		// 			as: 'Word1'
+		// 		}, {
+		// 			attributes: ['langue', 'word', 'aception'],
+		// 			model: models.Word,
+		// 			as: 'Word2'
+		// 		}]
+		// 	}, {
+		// 		model: models.User,
+		// 		as: 'User',
+		// 		attributes: ['username']
+		// 	}]
+		// }]
+	}).then(function (packEx) {
+		var exos = [];
+		for (var i = 0; i < packEx.length; i++) {
+			exos.push(packEx[i].ExerciseId);
+		}
+		models.Exercise.findAll({
+			where: {
+				id: {$in: exos}
+			},
+			attributes: ['id', 'qstnLang', 'typeEx'],
+			include: [{
+				attributes: ['Word1Id', 'Word2Id'],
+				model: models.Translation,
+				as: 'Translation',
+				include: [{
+					attributes: ['langue', 'word', 'aception'],
+					model: models.Word,
+					as: 'Word1'
+				}, {
+					attributes: ['langue', 'word', 'aception'],
+					model: models.Word,
+					as: 'Word2'
+				}]
+			}, {
+				model: models.User,
+				as: 'User',
+				attributes: ['username']
+			}]
+		}).then(function (exercises) {
+			res.render('exercise/index', {
+				exercises: exercises,
+				pack: req.pack,
+				errors: []
+			});
+		});
+	});
 };
 
 // Get /add   -- Formulario de seleccion de lenguas
@@ -111,7 +177,7 @@ exports.createExercise = function (req, res) {
 				}).save({fields: ["ExerciseId", "TranslationId"]});
 			}
 		}
-		res.redirect(req.session.redir.toString());
+		res.redirect('/exercise');
 	}).catch(function (error) {
 		res.render('exercise/new', {exercise: exercise, errors: error.errors});
 	});
@@ -143,38 +209,40 @@ exports.load = function (req, res, next, exerciseId) {
 			attributes: ['username']
 		}]
 	}).then(function (exercise) {
-			if (exercise) {
-				models.ExtraEx.findAll({
-					where: {ExerciseId: exerciseId},
-					include: [{
-						attributes: ['Word1Id', 'Word2Id'],
-						model: models.Translation,
-						as: 'Translation',
-						include: [{
-							attributes: ['langue', 'word', 'aception'],
-							model: models.Word,
-							as: 'Word1'
-						}, {
-							attributes: ['langue', 'word', 'aception'],
-							model: models.Word,
-							as: 'Word2'
-						}]
-					}]
-				}).then(function (extraEx) {
-					req.exercise = exercise;
-					req.extra = extraEx || [];
-					next();
-				});
-			} else {
-				next(new Error('No existen datos para este Exercise = ' + exerciseId))
-			}
+		if (exercise) {
+			req.exercise = exercise;
+			next();
+		} else {
+			next(new Error('No existen datos para este Exercise = ' + exerciseId))
 		}
-	).catch(function (error) {
+	}).catch(function (error) {
 		next(error)
 	});
 };
 
 // GET /user/:id/edit
 exports.detailExercise = function (req, res) {
-	res.render('exercise/detail', {exercise: req.exercise, extra: req.extra, errors: []}); // req.user: instancia de user cargada con autoload
+	models.ExtraEx.findAll({
+		where: {ExerciseId: req.exercise.id},
+		include: [{
+			attributes: ['Word1Id', 'Word2Id'],
+			model: models.Translation,
+			as: 'Translation',
+			include: [{
+				attributes: ['langue', 'word', 'aception'],
+				model: models.Word,
+				as: 'Word1'
+			}, {
+				attributes: ['langue', 'word', 'aception'],
+				model: models.Word,
+				as: 'Word2'
+			}]
+		}]
+	}).then(function (extraEx) {
+		res.render('exercise/detail', {
+			exercise: req.exercise,
+			extra: extraEx || [],
+			errors: []
+		});
+	});
 };

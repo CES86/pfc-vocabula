@@ -12,6 +12,10 @@ module.exports = function (sequelize, DataTypes) {
 				type: DataTypes.STRING(4),
 				allowNull: false,
 				isAlpha: true,
+				get: function () {
+					var str = this.getDataValue('langTranslation');
+					return str.substring(0, 2) + " ⇉ " + str.substring(2, 4);
+				},
 				validate: {
 					notEmpty: {msg: "-> Falta idioma para el grupo"}
 				}

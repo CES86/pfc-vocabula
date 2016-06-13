@@ -1,0 +1,17 @@
+<% var sizeSelect = 5 %>
+<% var arrow2ways = " &#x21c6; " %>
+<form method="post" action="">
+	<fieldset>
+		<legend>Asignar el paquete <%= pack.title %> (<%= langue1 %><%- arrow2ways %><%= langue2 %>) a...</legend>
+		<fieldset>
+			<legend> Seleccione l@s estudiantes para asignar la tarea</legend>
+			<label for="stSelected">Utilize la tecla Ctrl para seleccionar varios</label><br>
+			<select name="stSelected" size="<%= sizeSelect %>" multiple required>
+				<% for(var i = 0; i < students.length; i++) { %>
+				<option value="<%= students[i].id %>"><%= students[i].username %></option>
+				<% } %>
+			</select>
+		</fieldset>
+		<% include ../includes/_buttons.ejs %>
+	</fieldset>
+</form>

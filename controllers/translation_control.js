@@ -100,7 +100,7 @@ exports.create = function (req, res) {
 						translation.save({
 							fields: ["Word1Id", "Word2Id", "UserId"]
 						}).then(function () {
-							res.redirect(req.session.redir.toString());
+							res.redirect('/translation');
 						}).catch(function (error) {
 							res.render('translation/new', {translation: translation, errors: error.errors});
 						});
@@ -136,5 +136,5 @@ exports.create = function (req, res) {
 exports.uploadTranslationLot = function (req, res) {
 	//Analizar el archivo!
 	models.parseTranslationLot(req.file.path, req.session.user.id);
-	res.redirect(req.session.redir.toString());
+	res.redirect('/translation');
 };

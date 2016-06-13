@@ -12,23 +12,28 @@
 <body>
 <% var isLogged = typeof(session.user) != "undefined"; %>
 
+<% var arrow2ways = " &#x21c6; " %>
+<% var arrow1way = " &#x21c9; " %>
+
 <div id="page-wrap">
 	<header class="main" id="h1">
 		<% if(!isLogged){ %>
 		<span class="right"><a href="/user/new">Registrarse</a> - <a href="/user/login">Login</a></span>
-		<% }else{ %>
+		<% } else { %>
 		<span class="right"><%= session.user.username %>
 			- <a href="/user/<%= session.user.username %>/edit">Editar</a>
 			- <a href="/user/logout">Salir</a></span>
 		<% } %>
-		<% if(!session.user){ %>
+		<% if(!isLogged){ %>
 		<h2>Bienvenid@ a <span>PFC-Vocabula</span></h2>
 		<% } %>
 	</header>
 
 	<nav class="main" id="n1" role="navigation">
-		<h4><span><a href="/">Inicio</a></span>
-			<% if(session.user){ %>
+		<h4>
+			<% if(!isLogged){ %>
+			<span><a href="/">Inicio</a></span>
+			<% }else{ %>
 			<span><a href="/user/<%= session.user.username %>">Perfil</a></span>
 			<% } %>
 		</h4>

@@ -17,9 +17,12 @@ router.param('packId', packControl.load);  // autoload :userName
 router.get('/add', sessionControl.loginTeacherRequired, exerciseControl.addExercise);		// formulario de seleccion de idiomas
 router.get('/new', sessionControl.loginTeacherRequired, exerciseControl.newExercise);
 router.post('/new', sessionControl.loginTeacherRequired, exerciseControl.createExercise);		// registrar word
+
 // router.get('/extra', sessionControl.loginTeacherRequired, exerciseControl.addExtra);
 // router.post('/extra', sessionControl.loginTeacherRequired, exerciseControl.createExtra);
+
 router.get('/:exerciseId(\\d+)/detail', sessionControl.loginTeacherRequired, exerciseControl.detailExercise);
+
 router.get('/pack/:packId(\\d+)', sessionControl.loginTeacherRequired, exerciseControl.showPackExercises);
 
 

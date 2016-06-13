@@ -7,6 +7,7 @@ var sessionControl = require('../controllers/session_control');
 var userControl = require('../controllers/user_control');
 var upLoadControl = require('../controllers/upload_control');
 var groupControl = require('../controllers/group_control');
+var packControl = require('../controllers/pack_control');
 
 // Definición de rutas de Usuario [sobre el Path "/user/*"]
 router.get('/', sessionControl.loginAdminRequired, userControl.showUsers);
@@ -15,7 +16,8 @@ router.get('/students', sessionControl.loginAdminRequired, userControl.showStude
 
 // Autoload de comandos con 'username'
 router.param('userName', userControl.load);  // autoload :userName
-router.param('groupId', groupControl.load);  // autoload :userName
+router.param('groupId', groupControl.load);  // autoload :groupId
+router.param('packId', packControl.load);  // autoload :packId
 
 // Definición de rutas de Sesion [sobre el Path "/user/*"]
 router.get('/login', sessionControl.NOTloginRequired, sessionControl.new);		// formulario login
@@ -34,6 +36,10 @@ router.put('/:userName([a-zA-Z]+)', sessionControl.loginRequired, userControl.ow
 router.get('/:userName([a-zA-Z]+)', sessionControl.loginRequired, userControl.ownershipRequired, userControl.menu);				// actualizar información de cuenta
 router.delete('/:userName([a-zA-Z]+)', sessionControl.loginRequired, userControl.ownershipRequired, userControl.destroy);		// borrar cuenta
 
-router.get('/group/:groupId(\\d+)', sessionControl.loginTeacherRequired, groupControl.detailGroup);
+router.get('/group/:groupId(\\d+)', sessionControl.loginTeacherRequired, userControl.detailGroup);
+router.get('/pack/:packId(\\d+)', sessionControl.loginTeacherRequired, userControl.showPackStudents);
+
+router.get('/pack/:packId(\\d+)/homework', sessionControl.loginTeacherRequired, userControl.showHomeWorkPack);
+router.post('/pack/:packId(\\d+)/homework', sessionControl.loginTeacherRequired, userControl.createHomeWorkPack);
 
 module.exports = router;

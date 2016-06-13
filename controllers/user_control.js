@@ -31,7 +31,36 @@ exports.showStudents = function (req, res) {
 		res.render('user/students', {
 			students: students,
 			group: null,
+			pack: null,
 			errors: []
+		});
+	});
+};
+
+// GET /user/:id/edit
+exports.showPackStudents = function (req, res) {
+	models.PackStudent.findAll({
+		where: {
+			PackId: req.pack.id
+		},
+		attributes: ['UserId']
+	}).then(function (packSt) {
+		var sts = [];
+		for (var i = 0; i < packSt.length; i++) {
+			sts.push(packSt[i].UserId);
+		}
+		models.User.findAll({
+			where: {
+				id: {$in: sts}
+			},
+			attributes: ['id', 'username', 'firstName', 'lastName']
+		}).then(function (students) {
+			res.render('user/students', {
+				students: students,
+				group: null,
+				pack: req.pack,
+				errors: []
+			});
 		});
 	});
 };
@@ -72,7 +101,7 @@ exports.create = function (req, res) {
 						//req.session.user = {id: user.id, username: user.username, isAdmin: user.isAdmin};
 						res.redirect('/');
 					} else
-						res.redirect(req.session.redir.toString());// redirección a path anterior
+						res.redirect('/user');
 				});
 			}
 		}
@@ -85,7 +114,7 @@ exports.create = function (req, res) {
 exports.uploadUserLot = function (req, res) {
 	//Analizar el archivo!
 	models.parseUserLot(req.file.path);
-	res.redirect(req.session.redir.toString());
+	res.redirect('/user');
 };
 
 // Comprueba si el user esta registrado en user
@@ -204,5 +233,79 @@ exports.menu = function (req, res, next) {
 		user: userURL,
 		errors: []
 	});
-}
-;
+};
+
+// GET /user/:id/edit
+exports.detailGroup = function (req, res) {
+	models.User.findAll({
+			where: {
+				ClassGroupId: req.group.id,
+				isAdmin: false,
+				isTeacher: false
+			},
+			attributes: ['id', 'username', 'firstName', 'lastName'],
+		}
+	).then(function (students) {
+		res.render('user/students', {
+			students: students,
+			group: req.group,
+			pack: null,
+			errors: []
+		});
+	});
+};
+
+// GET /user/:id/edit
+exports.showHomeWorkPack = function (req, res) {
+	models.PackStudent.findAll({
+		where: {
+			PackId: req.pack.id
+		},
+		attributes: ["UserId"]
+	}).then(function (alreadySet) {
+		var sts = [-1];
+		for (var i = 0; i < alreadySet.length; i++) {
+			sts.push(alreadySet[i].UserId);
+		}
+		var str = req.pack.langTranslation;
+		var langue1 = str.substring(0, 2);
+		var langue2 = str.substring(3, 5);
+		models.User.findAll({
+			where: {
+				isAdmin: false,
+				isTeacher: false,
+				$or: [
+					{
+						motherLang: langue1,
+						foreignLang: langue2
+					},
+					{
+						motherLang: langue2,
+						foreignLang: langue1
+					},
+				],
+				id: {$notIn: sts}
+			},
+			attributes: ['id', 'username', 'firstName', 'lastName']
+		}).then(function (students) {
+			res.render('pack/homework', {
+				langue1: langue1,
+				langue2: langue2,
+				students: students,
+				pack: req.pack,
+				errors: []
+			});
+		});
+	});
+};
+
+// POST /word
+exports.createHomeWorkPack = function (req, res) {
+	for (var i = 0; i < req.body.stSelected.length; i++) {
+		models.PackStudent.build({
+			PackId: req.pack.id,
+			UserId: req.body.stSelected[i]
+		}).save({fields: ["PackId", "UserId"]});
+	}
+	res.redirect('/user/pack/' + req.pack.id);
+};

@@ -1,18 +1,17 @@
 <% var sizeSelect = 5 %>
-<% var s = " &#x279c; " %>
+<% var arrow2way = " &#x21c6; " %>
 <form method="post" action="/exercise/new">
 	<fieldset>
 		<legend>Crear traducción nueva</legend>
 		<% include _question.ejs %>
 		<fieldset>
 			<legend>Elija UNA traducción</legend>
-			<label for="translation"><%= destinoLang %><%- s %><%= origenLang %>
-				& <%= origenLang %><%- s %><%= destinoLang %>:</label><br>
+			<label for="translation"><%= origenLang %><%- arrow2way %><%= destinoLang %>:</label><br>
 			<select name="translation" size="<%= sizeSelect %>" required>
 				<% for(var i = 0; i < translations.length; i++) { %>
 				<option value="<%= translations[i].id %>">
 					<%= translations[i].Word1.word %> (<%= translations[i].Word1.aception %>)
-					<%- s %>
+					<%- arrow2way %>
 					<%= translations[i].Word2.word %> (<%= translations[i].Word2.aception %>)
 				</option>
 				<% } %>
@@ -21,13 +20,12 @@
 		<% if(!(type == '1' | type == '2')) { %>
 		<fieldset>
 			<legend>Seleccione la/s traduccion/es Extra/s para el ejercicio (Use la tecla Ctrl)</legend>
-			<label for="extra"><%= destinoLang %><%- s %><%= origenLang %>
-				& <%= origenLang %><%- s %><%= destinoLang %>:</label><br>
+			<label for="extra"><%= origenLang %><%- arrow2way %><%= destinoLang %>:</label><br>
 			<select name="extra" size="<%= sizeSelect %>" multiple required>
 				<% for(var i = 0; i < translations.length; i++) { %>
 				<option value="<%= translations[i].id %>">
 					<%= translations[i].Word1.word %> (<%= translations[i].Word1.aception %>)
-					<%- s %>
+					<%- arrow2way %>
 					<%= translations[i].Word2.word %> (<%= translations[i].Word2.aception %>)
 				</option>
 				<% } %>
