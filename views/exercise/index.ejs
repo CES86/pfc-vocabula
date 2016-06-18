@@ -1,10 +1,11 @@
+<% var isAdmin = session.user.isAdmin %>
 <a href="/exercise/add"><span class="glyphicon glyphicon-plus" aria-hidden="true"/></span> Añadir Ejercicio</a>
 <br>
 <br>
 <table class="table table-striped table-hover table-condensed">
 	<thead>
 	<tr>
-		<th colspan="6">
+		<th colspan="7">
 			<% if(pack){ %>
 			Titulo Paquete: "<%= pack.title %>" (<%= pack.User.username %>)<br>
 			Descripción: <%= pack.description %><br>
@@ -19,6 +20,9 @@
 		<th>Word Answer</th>
 		<th>Author</th>
 		<th>Details (R/S)</th>
+		<% if(isAdmin){ %>
+		<th>Editar</th>
+		<% } %>
 	</tr>
 	</thead>
 	<% for(var i = 0; i < exercises.length; i++) { %>
@@ -56,6 +60,18 @@
 			</a>
 			<% } %>
 		</td>
+		<% if(isAdmin){ %>
+		<td>
+			<form method="post" action="/exercise/<%= exercises[i].id %>?_method=delete">
+				<button type="submit" class="btn btn-xs btn-danger"
+				        onClick="return confirm('ATENCIÓN!!! Se va a proceder al borrado de este EJERCICIO.\n' +
+				         'Solo los Administradores de la WebApp pueden realizar esta acción.\n' +
+				          'El borrado de un ejercicio que esté contenido en un paquete acarreará un borrado en Cascada.');">
+					<span class="glyphicon glyphicon-trash"></span>&nbsp;
+				</button>
+			</form>
+		</td>
+		<% } %>
 	</tr>
 	<% } %>
 </table>

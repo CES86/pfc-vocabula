@@ -5,13 +5,14 @@
 <% if(isTeacher){ %>
 <% if(isAdmin){ %>
 <br>
-<a href="/user">Gestión de USUARIOS</a>
+<a href="/user/teachers">Gestión de PROFESORES</a>
+<br>
 <br>
 <% } %>
 <% include _teacher.ejs %>
 <% if(isAdmin){ %>
 <br>
-<a href="/mant">MANTENIMIENTO del SISTEMA</a>
+<a href="/system">MANTENIMIENTO del SISTEMA</a>
 <br>
 <% } %>
 <% } %>

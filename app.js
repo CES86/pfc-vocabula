@@ -45,17 +45,20 @@ app.use(function (req, res, next) {
 	// si no existe lo inicializa
 	if (!req.session.redir) {
 		req.session.redir = '/';
+		req.session.redir2 = '/';
 	}
 
 	// guardar path en user.redir para despues de login
 	if (!req.path.match(/\/login|\/logout|\/add|\/new|\/edit|\/upload/)) {
+		req.session.redir2 = req.session.redir;
 		req.session.redir = req.path;
 	}
 
 	// Hacer visible req.user en las vistas
 	res.locals.session = req.session;
 	res.locals.hostname = req.headers.host;
-	res.locals.refreshTimer = 20;
+	res.locals.refreshTimer = 60 * 60;
+	res.locals.sizeSelect = 5;
 	next();
 });
 

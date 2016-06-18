@@ -12,9 +12,9 @@
 <form method="post" action="/user/<%= user.username %>?_method=delete">
 	<fieldset>
 		<legend>ATENCIÓN!: BORRAR la cuenta "<%= user.username %>"</legend>
-		<button type="submit"
+		<button type="submit" class="btn btn btn-danger"
 		        onClick="return confirm('Se va a proceder al borrado de la cuenta de usuario <%= user.username %>');">
-			Eliminar cuenta de "<%= user.username %>"
+			<span class="glyphicon glyphicon-trash"></span>&nbsp;Eliminar cuenta de "<%= user.username %>"
 		</button>
 	</fieldset>
 </form>

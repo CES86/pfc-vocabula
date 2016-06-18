@@ -1,6 +1,7 @@
 <% var isUser = typeof(user) != "undefined"; %>
 <% var isLogged = typeof(session.user) != "undefined"; %>
 <% var isAdmin = isLogged && session.user.isAdmin %>
+<% var isTeacher = isAdmin || isLogged && session.user.isTeacher %>
 <% var isNotAdmin = isLogged && !session.user.isAdmin %>
 <% var isUserAdmin = isUser && user.isAdmin %>
 <p>
@@ -32,7 +33,7 @@
 	       value="<%= isUser ? user.lastName : '' %>"/>
 <p>
 	<label for="motherLang">Mother Lang:</label>
-	<select name="motherLang">
+	<select name="motherLang" <%= !isAdmin ? 'required' : '' %> <%= isUser && !isAdmin ? 'disabled' : '' %>>
 		<option value="">-</option>
 		<option value="ES" <%= isUser && user.motherLang === "ES" ? 'selected' : '' %>>Español
 		</option>
@@ -43,7 +44,7 @@
 	</select>
 <p>
 	<label for="foreignLang">Foreign Lang:</label>
-	<select name="foreignLang">
+	<select name="foreignLang" <%= !isAdmin ? 'required' : '' %> <%= isUser && !isAdmin ? 'disabled' : '' %>>
 		<option value="">-</option>
 		<option value="ES" <%= isUser && user.foreignLang === "ES" ? 'selected' : '' %>>
 			Español
@@ -56,5 +57,17 @@
 		</option>
 	</select>
 <p>
+	<% if (isUser && isAdmin) { %>
+	<label for="ClassGroupId">ClassGroup:</label>
+	<select name="ClassGroupId">
+		<option value="" <%= user.ClassGroupId == null ? 'selected' : '' %>>-</option>
+		<% for(var i = 0; i < groups.length; i++){ %>
+		<option value="<%= groups[i].id %>" <%= user.ClassGroupId == groups[i].id ? 'selected' : '' %>>
+			<%= groups[i].name %>
+		</option>
+		<% } %>
+	</select>
+<p>
+	<% } %>
 	<% } %>
 <% include ../includes/_buttons.ejs %>

@@ -7,12 +7,6 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.STRING(4),
 			allowNull: false,
 			isAlpha: true,
-			get: function () {
-				var str = this.getDataValue('langTranslation');
-				var l1 = str.substring(0, 2);
-				var l2 = str.substring(2, 4);
-				return l1 + "⇆" + l2;
-			},
 			validate: {
 				notEmpty: {msg: "-> Falta idioma para el PACK"}
 			}
@@ -26,6 +20,17 @@ module.exports = function (sequelize, DataTypes) {
 			allowNull: true
 		}
 	}, {
+		getterMethods: {
+			langue1: function () {
+				return this.getDataValue('langTranslation').substring(0, 2);
+			},
+			langue2: function () {
+				return this.getDataValue('langTranslation').substring(2, 4);
+			},
+			getArrowed: function () {
+				return this.langue1 + " ⇆ " + this.langue2;
+			}
+		},
 		timestamps: true,
 		updatedAt: false
 	});

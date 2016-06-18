@@ -1,0 +1,21 @@
+<form method="post" action="">
+	<fieldset>
+		<legend>
+			Añadir al <%= group.name %> (<%= group.getArrowed %>) los alumn@s...
+		</legend>
+		<fieldset>
+			<legend> Seleccione el/ profesor/a asignar al Grupo</legend>
+			<% if(teachers.length == 0){ %>
+			<label>No hay alumnos con las características buscadas.</label><br>
+			<% }else{ %>
+			<label for="tcSelected">Utilize la tecla Ctrl para seleccionar varios</label><br>
+			<select name="tcSelected" size="<%= sizeSelect %>" required>
+				<% for(var i = 0; i < teachers.length; i++) { %>
+				<option value="<%= teachers[i].id %>"><%= teachers[i].username %></option>
+				<% } %>
+			</select>
+			<% } %>
+		</fieldset>
+		<% include ../includes/_buttons.ejs %>
+	</fieldset>
+</form>

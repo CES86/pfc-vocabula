@@ -1,3 +1,4 @@
+<% if(session.user.isAdmin){ %>
 <p>
 	<label for="origen">Lengua ORIGEN:</label>
 	<select name="origen" required>
@@ -17,5 +18,15 @@
 		<% } %>
 	</select>
 <p>
-	<a class="btn btn-default" href="<%= session ? session.redir : '/' %>" role="button">Volver</a>
-	<input class="btn btn-primary" type="submit" value="Continuar">
+	<% }else{ %>
+<p>
+	<label for="origen">Lengua ORIGEN:</label>
+	<input type="radio" name="origen" value="<%= session.user.motherLang %>" required> <%= session.user.motherLang %>
+	<input type="radio" name="origen" value="<%= session.user.foreignLang %>" required> <%= session.user.foreignLang %>
+<p>
+	<label for="destino">Lengua DESTINO:</label>
+	<input type="radio" name="destino" value="<%= session.user.foreignLang %>" required> <%= session.user.foreignLang %>
+	<input type="radio" name="destino" value="<%= session.user.motherLang %>" required> <%= session.user.motherLang %>
+<p>
+	<% } %>
+<% include ../includes/_buttonsAdd.ejs %>

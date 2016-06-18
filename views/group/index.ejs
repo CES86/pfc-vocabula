@@ -1,22 +1,24 @@
+<% var isAdmin = session.user.isAdmin %>
 <a href="/group/add"><span class="glyphicon glyphicon-plus" aria-hidden="true"/></span> Crear GRUPO de ESTUDIANTES</a>
 <br>
 <br>
 <table class="table table-striped table-hover table-condensed">
 	<thead>
 	<tr>
-		<th colspan="4">Grupos (<%= groups.length %>)</th>
+		<th colspan="5">Grupos (<%= groups.length %>)</th>
 	</tr>
 	<tr>
 		<th>Idiomas</th>
 		<th>Title</th>
-		<th>Author</th>
+		<th>Teacher</th>
 		<th>Details</th>
+		<th>Editar</th>
 	</tr>
 	</thead>
 	<% for(var i = 0; i < groups.length; i++) { %>
 	<tr>
 		<td>
-			<%= groups[i].langTranslation %>
+			<%= groups[i].getArrowed %>
 		</td>
 		<td>
 			<%= groups[i].name %>
@@ -25,9 +27,20 @@
 			<%= groups[i].User.username %>
 		</td>
 		<td><a href="/user/group/<%= groups[i].id %>">
-				<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"/> </span>
+				<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"/></span>
+				<span class="glyphicon glyphicon-user" aria-hidden="true"/></span>
 			</a>
 		</td>
+		<% if(isAdmin){ %>
+		<td>
+			<form method="post" action="/group/<%= groups[i].id %>?_method=delete">
+				<button type="submit" class="btn btn-xs btn-danger"
+				        onClick="return confirm('Esto eliminará a este estudiante del grupo!');">
+					<span class="glyphicon glyphicon-trash"></span>&nbsp;
+				</button>
+			</form>
+		</td>
+		<% } %>
 	</tr>
 	<% } %>
 </table>

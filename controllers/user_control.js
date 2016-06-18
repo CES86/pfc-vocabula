@@ -2,7 +2,7 @@ var models = require('../models/models.js');
 
 // Get /   -- Formulario de login
 exports.showUsers = function (req, res) {
-	res.render('user/index', {errors: []});
+	res.redirect('/user/' + req.session.user.username);
 };
 
 exports.showTeachers = function (req, res) {
@@ -45,9 +45,9 @@ exports.showPackStudents = function (req, res) {
 		},
 		attributes: ['UserId']
 	}).then(function (packSt) {
-		var sts = [];
+		var sts = [0];
 		for (var i = 0; i < packSt.length; i++) {
-			sts.push(packSt[i].UserId);
+			sts = sts.concat(packSt[i].UserId);
 		}
 		models.User.findAll({
 			where: {
@@ -75,38 +75,41 @@ exports.newUser = function (req, res) {
 
 // POST /user
 exports.create = function (req, res) {
-	var user = models.User.build({
-		email: req.body.email.toLowerCase(),
-		username: req.body.username.toLowerCase(),
-		password: req.body.password,
-		isTeacher: req.body.isTeacher,
-		firstName: req.body.firstName,
-		lastName: req.body.lastName,
-		motherLang: req.body.motherLang.toUpperCase(),
-		foreignLang: req.body.foreignLang.toUpperCase()
-	});
-
-	user.validate().then(
-		function (err) {
-			if (err) {
-				res.render('user/new', {user: user, errors: err.errors});
-			} else {
-				// save: guarda en DB campos username y password de user
-				user.save({
-					fields: ["email", "username", "password", "isTeacher", "firstName", "lastName", "motherLang", "foreignLang"]
-				}).then(function () {
-					// crea la sesión para que el usuario acceda ya autenticado y redirige a /
-					if (!req.session.user || !req.session.user.isAdmin) {
-						req.session.user = user;//pasar el objeto completo o solo algunos parametros?
-						//req.session.user = {id: user.id, username: user.username, isAdmin: user.isAdmin};
-						res.redirect('/');
-					} else
-						res.redirect('/user');
-				});
+	models.Statistics.build(null).save().then(function (sttstc) {
+		var user = models.User.build({
+			email: req.body.email.toLowerCase(),
+			username: req.body.username.toLowerCase(),
+			password: req.body.password,
+			isTeacher: req.body.isTeacher,
+			firstName: req.body.firstName,
+			lastName: req.body.lastName,
+			motherLang: req.body.motherLang.toUpperCase(),
+			foreignLang: req.body.foreignLang.toUpperCase(),
+			StatisticId: (req.body.isTeacher === 'false' ? sttstc.id : null)
+		});
+		user.validate().then(
+			function (err) {
+				if (err) {
+					sttstc.destroy();
+					res.render('user/new', {errors: err.errors});
+				} else {
+					// save: guarda en DB campos username y password de user
+					user.save({
+						fields: ["email", "username", "password", "isTeacher", "firstName", "lastName", "motherLang", "foreignLang", "StatisticId"]
+					}).then(function () {
+						if (!(req.body.isTeacher === 'false'))
+							sttstc.destroy();
+						// crea la sesión para que el usuario acceda ya autenticado y redirige a /
+						if (!req.session.user || !req.session.user.isAdmin) {
+							req.session.user = user;//pasar el objeto completo o solo algunos parametros?
+							//req.session.user = {id: user.id, username: user.username, isAdmin: user.isAdmin};
+							res.redirect('/');
+						} else
+							res.redirect('/user');
+					});
+				}
 			}
-		}
-	).catch(function (error) {
-		next(error)
+		);
 	});
 };
 
@@ -124,7 +127,7 @@ exports.autenticar = function (login, password, callback) {
 		where: {
 			username: login
 		},
-		attributes: ['id', 'username', 'isAdmin', 'isTeacher', 'firstName', 'lastName']
+		attributes: ['id', 'username', 'isAdmin', 'isTeacher', 'firstName', 'lastName', 'motherLang', 'foreignLang']
 	}).then(function (user) {
 		if (user) {
 			models.User.find({
@@ -150,11 +153,31 @@ exports.autenticar = function (login, password, callback) {
 ;
 
 // Autoload :id
-exports.load = function (req, res, next, userName) {
+exports.loadFull = function (req, res, next, userName) {
 	models.User.find({
 		where: {
 			username: userName.toLocaleLowerCase()
 		}
+	}).then(function (user) {
+			if (user) {
+				req.user = user;
+				next();
+			} else {
+				next(new Error('No existe el UserName = ' + userName))
+			}
+		}
+	).catch(function (error) {
+		next(error)
+	});
+};
+
+// Autoload :id
+exports.loadName = function (req, res, next, userName) {
+	models.User.find({
+		where: {
+			username: userName.toLocaleLowerCase()
+		},
+		attributes: {exclude: ['password']}
 	}).then(function (user) {
 			if (user) {
 				req.user = user;
@@ -177,13 +200,38 @@ exports.ownershipRequired = function (req, res, next) {
 	if (isAdmin || objUser === logUser) {
 		next();
 	} else {
-		res.redirect(req.session.redir.toString());// redirección a path anterior a login
+		res.redirect('/user/' + logUser);
+	}
+};
+
+// MW que permite acciones solamente si el usuario objeto corresponde con el usuario logeado o si es un admin
+exports.ownershipTeacherRequired = function (req, res, next) {
+	var objUser = req.user.username;
+	var logUser = req.session.user.username;
+	var isAdmin = req.session.user.isAdmin;
+	var isTeacher = req.session.user.isTeacher;
+
+	if (isAdmin || isTeacher || objUser === logUser) {
+		next();
+	} else {
+		res.redirect('/user/' + logUser);
 	}
 };
 
 // GET /user/:id/edit
 exports.edit = function (req, res) {
-	res.render('user/edit', {user: req.user, errors: []}); // req.user: instancia de user cargada con autoload
+	var mLang, fLang = "";
+	if (req.user.motherLang && req.user.foreignLang) {
+		mLang = req.user.motherLang;
+		fLang = req.user.foreignLang;
+	}
+	models.ClassGroup.findAll({
+		where: {
+			langTranslation: mLang + fLang
+		}
+	}).then(function (groups) {
+		res.render('user/edit', {user: req.user, groups: groups, errors: []}); // req.user: instancia de user cargada con autoload
+	});
 };
 
 
@@ -195,8 +243,12 @@ exports.update = function (req, res, next) {
 	req.user.password = req.body.password;
 	req.user.firstName = req.body.firstName;
 	req.user.lastName = req.body.lastName;
-	req.user.motherLang = req.body.motherLang;
-	req.user.foreignLang = req.body.foreignLang;
+	if (req.user.motherLang != req.body.motherLang || req.user.foreignLang != req.body.foreignLang) {
+		req.user.motherLang = (req.body.motherLang == "" ? null : req.body.motherLang);
+		req.user.foreignLang = (req.body.foreignLang == "" ? null : req.body.foreignLang);
+		req.user.ClassGroupId = null;
+	} else
+		req.user.ClassGroupId = (req.body.ClassGroupId == "" ? null : req.body.ClassGroupId);
 
 	req.user.validate().then(
 		function (err) {
@@ -204,7 +256,7 @@ exports.update = function (req, res, next) {
 				res.render('user/edit', {user: req.user, errors: err.errors});
 			} else {
 				req.user     // save: guarda campo username y password en DB
-					.save({fields: ["email", "username", "password", "firstName", "lastName", "motherLang", "foreignLang"]})
+					.save({fields: ["email", "username", "password", "firstName", "lastName", "motherLang", "foreignLang", "ClassGroupId"]})
 					.then(function () {
 						res.redirect('/user/' + req.user.username); //añadir algo como, {errors: errors}???INFO!
 					});
@@ -218,8 +270,8 @@ exports.update = function (req, res, next) {
 // GET/DELETE /user/:id
 exports.destroy = function (req, res) {
 	req.user.destroy().then(function () {
-		// borra la sesión y redirige a /
-		delete req.session.user;
+		// No se borra la sesión xq solo el Admin puede borrar Usuarios y redirige a /
+		// delete req.session.user;
 		res.redirect('/');
 	}).catch(function (error) {
 		next(error)
@@ -253,59 +305,4 @@ exports.detailGroup = function (req, res) {
 			errors: []
 		});
 	});
-};
-
-// GET /user/:id/edit
-exports.showHomeWorkPack = function (req, res) {
-	models.PackStudent.findAll({
-		where: {
-			PackId: req.pack.id
-		},
-		attributes: ["UserId"]
-	}).then(function (alreadySet) {
-		var sts = [-1];
-		for (var i = 0; i < alreadySet.length; i++) {
-			sts.push(alreadySet[i].UserId);
-		}
-		var str = req.pack.langTranslation;
-		var langue1 = str.substring(0, 2);
-		var langue2 = str.substring(3, 5);
-		models.User.findAll({
-			where: {
-				isAdmin: false,
-				isTeacher: false,
-				$or: [
-					{
-						motherLang: langue1,
-						foreignLang: langue2
-					},
-					{
-						motherLang: langue2,
-						foreignLang: langue1
-					},
-				],
-				id: {$notIn: sts}
-			},
-			attributes: ['id', 'username', 'firstName', 'lastName']
-		}).then(function (students) {
-			res.render('pack/homework', {
-				langue1: langue1,
-				langue2: langue2,
-				students: students,
-				pack: req.pack,
-				errors: []
-			});
-		});
-	});
-};
-
-// POST /word
-exports.createHomeWorkPack = function (req, res) {
-	for (var i = 0; i < req.body.stSelected.length; i++) {
-		models.PackStudent.build({
-			PackId: req.pack.id,
-			UserId: req.body.stSelected[i]
-		}).save({fields: ["PackId", "UserId"]});
-	}
-	res.redirect('/user/pack/' + req.pack.id);
 };

@@ -1,2 +1,8 @@
-<a class="btn btn-default" href="<%= session ? session.redir : '/' %>" role="button">Volver</a>
-<input class="btn btn-success" type="submit" value="Enviar">
+<% var isUser = typeof(user) != "undefined"; %>
+<% var isStudents = typeof(students) != "undefined"; %>
+<% var isExercises = typeof(exercises) != "undefined"; %>
+<% var simul = isUser && user == 'simul'; %>
+<a class="btn btn-default" href="<%= session ? session.redir2 : '/' %>" role="button">Volver</a>
+<input class="btn btn-<%= simul ? 'danger' : 'success' %>" type="submit"
+       value="<%= simul ? 'Simulación' : 'Enviar' %>"
+		<%= simul || isExercises && exercises.length == 0 || isStudents && students.length == 0 ? 'disabled' : '' %>>

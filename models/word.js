@@ -45,6 +45,11 @@ module.exports = function (sequelize, DataTypes) {
 				}
 			}
 		}, {
+			getterMethods: {
+				wordAception: function () {
+					return this.getDataValue('word') + " (" + this.getDataValue('aception') + ")";
+				}
+			},
 			timestamps: true,
 			updatedAt: false
 		}

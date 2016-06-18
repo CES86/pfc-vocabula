@@ -1,38 +1,41 @@
 <% var sizeSelect = 5 %>
 <% var arrow2way = " &#x21c6; " %>
-<form method="post" action="/exercise/new">
+<form method="post" action="/exercise/new/type/<%= type %>">
 	<fieldset>
 		<legend>Crear traducción nueva</legend>
 		<% include _question.ejs %>
+		<% if(type != '4' ) { %>
 		<fieldset>
 			<legend>Elija UNA traducción</legend>
 			<label for="translation"><%= origenLang %><%- arrow2way %><%= destinoLang %>:</label><br>
 			<select name="translation" size="<%= sizeSelect %>" required>
 				<% for(var i = 0; i < translations.length; i++) { %>
 				<option value="<%= translations[i].id %>">
-					<%= translations[i].Word1.word %> (<%= translations[i].Word1.aception %>)
-					<%- arrow2way %>
-					<%= translations[i].Word2.word %> (<%= translations[i].Word2.aception %>)
+					<%= translations[i].getArrowed %>
 				</option>
 				<% } %>
 			</select>
 		</fieldset>
-		<% if(!(type == '1' | type == '2')) { %>
+		<% } else { %>
 		<fieldset>
-			<legend>Seleccione la/s traduccion/es Extra/s para el ejercicio (Use la tecla Ctrl)</legend>
+			<legend>Seleccione laS traduccionES para el ejercicio de Relación. Mínimo 2! (Use la tecla Ctrl)</legend>
 			<label for="extra"><%= origenLang %><%- arrow2way %><%= destinoLang %>:</label><br>
 			<select name="extra" size="<%= sizeSelect %>" multiple required>
 				<% for(var i = 0; i < translations.length; i++) { %>
 				<option value="<%= translations[i].id %>">
-					<%= translations[i].Word1.word %> (<%= translations[i].Word1.aception %>)
-					<%- arrow2way %>
-					<%= translations[i].Word2.word %> (<%= translations[i].Word2.aception %>)
+					<%= translations[i].getArrowed %>
 				</option>
 				<% } %>
 			</select>
 		</fieldset>
 		<% } %>
 		<input type="hidden" name="type" value="<%= type %>">
+		<input type="hidden" name="origen" value="<%= origenLang %>">
+		<input type="hidden" name="destino" value="<%= destinoLang %>">
+		<% if(type != '3' ) { %>
 		<% include ../includes/_buttons.ejs %>
+		<% } else{ %>
+		<% include ../includes/_buttonsAdd.ejs %>
+		<% } %>
 	</fieldset>
 </form>

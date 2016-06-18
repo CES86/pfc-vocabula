@@ -2,7 +2,7 @@
 <table class="table table-striped table-hover table-condensed">
 	<thead>
 	<tr>
-		<th colspan="3">
+		<th colspan="4">
 			<% if(pack){ %>
 			Titulo Paquete: "<%= pack.title %>" (<%= pack.User.username %>)
 			<a href="/exercise/pack/<%= pack.id %>">
@@ -12,12 +12,27 @@
 			<a href="/user/pack/<%= pack.id %>/homework">
 				<span class="glyphicon glyphicon-list" aria-hidden="true"/></span>
 				<span class="glyphicon glyphicon-user" aria-hidden="true"/></span>
-				Asignar Paquete a Estudiantes
+				Asignar a Estudiantes
+			</a><br>
+			<a href="/user/pack/<%= pack.id %>/classgroup">
+				<span class="glyphicon glyphicon-list" aria-hidden="true"/></span>
+				<span class="glyphicon glyphicon-th" aria-hidden="true"/></span>
+				Asignar a una Clase entera
 			</a><br>
 			<% } %>
 			<% if(group){ %>
 			Clase "<%= group.name %>" del Profesor "<%= group.User.username %>"<br>
-			Idiomas: <%= group.langTranslation %><br>
+			<a href="/user/group/<%= group.id %>/teacher">
+				<span class="glyphicon glyphicon-briefcase" aria-hidden="true"/></span>
+				<span class="glyphicon glyphicon-user" aria-hidden="true"/></span>
+				Cambiar profesor
+			</a><br>
+			Idiomas: <%= group.getArrowed %><br>
+			<a href="/user/group/<%= group.id %>/add">
+				<span class="glyphicon glyphicon-list" aria-hidden="true"/></span>
+				<span class="glyphicon glyphicon-user" aria-hidden="true"/></span>
+				Añadir Estudiantes
+			</a><br>
 			<% } %>
 			Students (<%= students.length %>)
 		</th>
@@ -28,15 +43,22 @@
 		<th>Editar</th>
 		<% } %>
 		<th>Progreso</th>
+		<% if(group || pack){ %>
+		<th>Editar</th>
+		<% } %>
 	</tr>
 	</thead>
 	<% for(var i = 0; i < students.length; i++) { %>
 	<tr>
 		<td>
+			<% if(isAdmin){ %>
 			<a href="/user/<%= students[i].username %>">
+				<% } %>
 				<span class="glyphicon glyphicon-user" aria-hidden="true"> </span>
 				<%= students[i].username %>
+				<% if(isAdmin){ %>
 			</a>
+			<% } %>
 		</td>
 		<% if(isAdmin){ %>
 		<td>
@@ -46,10 +68,30 @@
 		</td>
 		<% } %>
 		<td>
-			<a href="/user/<%= students[i].username %>/show">
-				<span class="glyphicon glyphicon-folder-open" aria-hidden="true"/> </span>Notas
+			<a href="/user/<%= students[i].username %>/statistics">
+				<span class="glyphicon glyphicon-folder-open" aria-hidden="true"/> </span>Progreso
 			</a>
 		</td>
+		<% if(group){ %>
+		<td>
+			<form method="post" action="/user/<%= students[i].username %>/group/<%= group.id %>?_method=delete">
+				<button type="submit" class="btn btn-xs btn-danger"
+				        onClick="return confirm('Esto eliminará a este estudiante del grupo!');">
+					<span class="glyphicon glyphicon-trash"></span>&nbsp;
+				</button>
+			</form>
+		</td>
+		<% } %>
+		<% if(pack){ %>
+		<td>
+			<form method="post" action="/user/<%= students[i].username %>/pack/<%= pack.id %>?_method=delete">
+				<button type="submit" class="btn btn-xs btn-danger"
+				        onClick="return confirm('Esto quitará la tarea a este alumno!');">
+					<span class="glyphicon glyphicon-trash"></span>&nbsp;
+				</button>
+			</form>
+		</td>
+		<% } %>
 	</tr>
 	<% } %>
 </table>
@@ -58,6 +100,6 @@
 <a href="/group">Volver a GESTION de GRUPOS</a>
 <% } else if(pack){ %>
 <a href="/pack">Volver a GESTION de PAQUETES</a>
-<% } else{ %>
+<% } else if(isAdmin){ %>
 <% include _add.ejs %>
 <% } %>

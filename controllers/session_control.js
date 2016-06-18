@@ -20,7 +20,7 @@ exports.loginAdminRequired = function (req, res, next) {
 		if (req.session.user.isAdmin)
 			next();
 		else
-			res.redirect(req.session.redir.toString());// redirección a path anterior
+			res.redirect('/user/' + req.session.user.username);
 	else
 		res.redirect('/user/login');
 };

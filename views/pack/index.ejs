@@ -1,24 +1,27 @@
+<% var isAdmin = session.user.isAdmin %>
 <a href="/pack/add"><span class="glyphicon glyphicon-plus" aria-hidden="true"/></span> Crear PAQUETE de EJERCICIOS</a>
 <br>
 <br>
 <table class="table table-striped table-hover table-condensed">
 	<thead>
 	<tr>
-		<th colspan="7">Paquetes de Ejercicios (<%= packs.length %>)</th>
+		<th colspan="9">Paquetes de Ejercicios (<%= packs.length %>)</th>
 	</tr>
 	<tr>
 		<th>Langues</th>
 		<th>Title</th>
 		<th colspan="2">Description</th>
 		<th>Author</th>
+		<th>Simul.</th>
 		<th>Details</th>
 		<th>Students</th>
+		<th>Editar</th>
 	</tr>
 	</thead>
 	<% for(var i = 0; i < packs.length; i++) { %>
 	<tr>
 		<td>
-			<%= packs[i].langTranslation %>
+			<%= packs[i].getArrowed %>
 		</td>
 		<td>
 			<%= packs[i].title %>
@@ -29,6 +32,11 @@
 		<td>
 			<%= packs[i].User.username %>
 		</td>
+		<td>
+			<a href="/pack/<%= packs[i].id %>/homework">
+				<span class="glyphicon glyphicon-play" aria-hidden="true"/> </span>
+			</a>
+		</td>
 		<td><a href="/exercise/pack/<%= packs[i].id %>">
 				<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"/> </span>
 			</a>
@@ -37,6 +45,18 @@
 				<span class="glyphicon glyphicon-user" aria-hidden="true"/> </span>
 			</a>
 		</td>
+		<% if(isAdmin){ %>
+		<td>
+			<form method="post" action="/pack/<%= packs[i].id %>?_method=delete">
+				<button type="submit" class="btn btn-xs btn-danger"
+				        onClick="return confirm('ATENCIÓN!!! Se va a proceder al borrado de este PAQUETE.\n' +
+				         'Solo los Administradores de la WebApp pueden realizar esta acción.\n' +
+				          'El borrado de un paquete que esté asignado a un alumno acarreará un borrado en Cascada.');">
+					<span class="glyphicon glyphicon-trash"></span>&nbsp;
+				</button>
+			</form>
+		</td>
+		<% } %>
 	</tr>
 	<% } %>
 </table>

@@ -9,16 +9,14 @@ module.exports = function (sequelize, DataTypes) {
 				defaultValue: 0
 			},
 			success: {
-				type: DataTypes.INTEGER,
+				type: DataTypes.REAL,
 				allowNull: false,
 				defaultValue: 0
-			},
-			dateLast: {
-				type: DataTypes.DATE,
-				allowNull: true,
-				defaultValue: null
 			}
-		}, {timestamps: false}
+		}, {
+			timestamps: true,
+			createdAt: false
+		}
 	);
 	return Statistics;
 }

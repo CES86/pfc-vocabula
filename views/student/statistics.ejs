@@ -1,0 +1,44 @@
+<% var fN = user.firstName; %>
+<% var lN = user.lastName; %>
+<% var uN = user.username; %>
+<table class="table table-striped table-hover table-condensed">
+	<tr>
+		<td>
+			Estudiante:
+		</td>
+		<td>
+			<%= (fN ? fN + " " + lN + " (" + uN + ")" : '"' + uN.toUpperCase() + '"') %>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Número de Ejercicios Realizados:
+		</td>
+		<td>
+			<%= statistic.total %>
+		</td>
+	</tr>
+	<td>
+		Porcentaje de Éxito:
+	</td>
+	<td>
+		<% if(statistic.total == 0){ %>
+		No hay datos aún...
+		<% }else{ %>
+		<%= ((statistic.success / statistic.total) * 100).toFixed(2) %>%
+		<% } %>
+	</td>
+	</tr>
+	<tr>
+		<td>
+			Última fecha:
+		</td>
+		<td>
+			<% if(statistic.total == 0){ %>
+			No hay datos aún...
+			<% }else{ %>
+			<%= statistic.updatedAt %>
+			<% } %>
+		</td>
+	</tr>
+</table>

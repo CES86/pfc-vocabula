@@ -3,7 +3,7 @@ var models = require('../models/models.js');
 // Get /   -- Formulario de login
 exports.showTranslations = function (req, res) {
 	models.Translation.findAll({
-			attributes: ['Word1Id', 'Word2Id'],
+			attributes: ['id', 'Word1Id', 'Word2Id'],
 			include: [
 				{
 					model: models.Word,
@@ -137,4 +137,29 @@ exports.uploadTranslationLot = function (req, res) {
 	//Analizar el archivo!
 	models.parseTranslationLot(req.file.path, req.session.user.id);
 	res.redirect('/translation');
+};
+
+
+// Autoload :id
+exports.load = function (req, res, next, translationId) {
+	models.Translation.findByPrimary(translationId).then(function (translation) {
+			if (translation) {
+				req.translation = translation;
+				next();
+			} else {
+				next(new Error('No existe la Traducción = ' + translationId))
+			}
+		}
+	).catch(function (error) {
+		next(error)
+	});
+};
+
+// GET/DELETE /user/:id
+exports.delete = function (req, res) {
+	req.translation.destroy().then(function () {
+		res.redirect(req.session.redir2);
+	}).catch(function (error) {
+		next(error)
+	});
 };

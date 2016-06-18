@@ -94,13 +94,13 @@ Translation.belongsTo(Word, {as: 'Word1', onDelete: 'CASCADE'});
 Translation.belongsTo(Word, {as: 'Word2', onDelete: 'CASCADE'});
 Translation.belongsTo(User);
 
-Exercise.belongsTo(Translation);
+Exercise.belongsTo(Translation, {as: 'Translation', onDelete: 'CASCADE'});
 Exercise.belongsTo(User);	//esto permite, dada un Exercise averiguar EL USER que está asociado a ese Exercise
 User.hasMany(Exercise);		//esto permitiria, dado un User averiguar que Exercise/s esta/n asociado/s a él
 
 // Exercise.belongsToMany(Translation, {through: ExtraEx});
 // Sequelize da problemas al referenciar con belongsToMany.
-ExtraEx.belongsTo(Exercise, {as: 'Exercise', onDelete: 'CASCADE', primaryKey: true});
+ExtraEx.belongsTo(Exercise, {as: 'Exercise', onDelete: 'CASCADE'});
 ExtraEx.belongsTo(Translation, {as: 'Translation', onDelete: 'CASCADE'});
 
 // Exercise.belongsToMany(Pack, {through: PackEx});
@@ -112,7 +112,9 @@ PackStudent.belongsTo(Pack, {as: 'Pack', onDelete: 'CASCADE'});
 PackStudent.belongsTo(User, {as: 'User', onDelete: 'CASCADE'});
 
 User.hasMany(LOG);
-Exercise.hasMany(LOG);
+LOG.belongsTo(Pack);
+LOG.belongsTo(Exercise);
+LOG.belongsTo(Translation);
 
 //EXPORTACIÓN DE TABLAS
 //=====================
@@ -136,11 +138,6 @@ sequelize.sync().then(function () {
 	// then(..) ejecuta el manejador una vez creada la tabla
 	User.count().then(function (count) {
 		if (count === 0) //{   // la tabla se inicializa solo si está vacía
-		// parserCSV('private/bulkCreate/Users.csv', 'USER', structureUSERs, null).then(
-		// 	function (result) {
-		// 		console.log('Ya?' + result);
-		// 	}
-		// );
 			User.bulkCreate([
 				{
 					email: 'system@pfc.es',
@@ -156,67 +153,9 @@ sequelize.sync().then(function () {
 					isAdmin: true
 				}
 			]).then(function (bulk) {
-				if (bulk)
+				if (bulk) {
 					console.log('BBDD (User) inicializada (' + bulk.length + ')');
-				//console.log(JSON.stringify(bulk[0]));
-				// Word.count().then(function (count) {
-				// 	if (count === 0) //{   // la tabla se inicializa solo si está vacía
-				// 		Word.bulkCreate(
-				// 			[
-				// 				{
-				// 					langue: 'ES',
-				// 					word: 'gato',
-				// 					aception: 'animal',
-				// 					UserId: 5,
-				// 					authorized: true
-				// 				},
-				// 				{
-				// 					langue: 'EN',
-				// 					word: 'cat',
-				// 					aception: 'animal',
-				// 					UserId: 5,
-				// 					authorized: true
-				// 				}
-				// 			]//,
-				// 			// {
-				// 			// 	validate: true,
-				// 			// 	benchmark: true
-				// 			// }
-				// 		).then(function (bulk) {
-				// 			if (bulk)
-				// 				console.log('BBDD (Word) inicializada (' + bulk.length + ')');
-				// 			//console.log(JSON.stringify(bulk[0]));
-				// 			Translation.count().then(function (count) {
-				// 				if (count === 0) //{   // la tabla se inicializa solo si está vacía
-				// 					Translation.bulkCreate(//[]
-				// 						[{
-				// 							Word1Id: 1,
-				// 							Word2Id: 2,
-				// 							UserId: 5
-				// 						},
-				// 							{
-				// 								Word1Id: 2,
-				// 								Word2Id: 2,
-				// 								UserId: 5
-				// 							},
-				// 							{
-				// 								Word1Id: 1,
-				// 								Word2Id: 1,
-				// 								UserId: 5
-				// 							},
-				// 							{
-				// 								Word1Id: 2,
-				// 								Word2Id: 1,
-				// 								UserId: 5
-				// 							}]
-				// 					).then(function (bulk) {
-				// 						if (bulk)
-				// 							console.log('BBDD (Translation) inicializada (' + bulk.length + ')');
-				// 						//console.log(JSON.stringify(bulk[0]));
-				// 					});
-				// 			});
-				// 		});
-				// });
+				}
 			});
 		else
 			console.log('BBDD (User) Contiene ' + count + ' usuarios registrados!');
@@ -238,111 +177,112 @@ var parserCSV = function (path, type, structure, userId) {
 		stream = byline.createStream(stream);
 
 		var numLine = 0;
-		var prueba = [];
 		console.log('CONTENIDO DEL ARCHIVO: ');
 		stream.on('data', function (line) {
-				numLine++;
-				if (numLine != 1) {
-					var values = line.split(separatorCSV);
-					if (values.length < lengthStructure)
-						console.log('ERROR línea #' + numLine + ': ' + line);
-					else {
-						console.log(line);
-						switch (type) {
-							case 'USER':
-								var user = User.build({
-									email: values[0].toLowerCase(),
-									username: values[1].toLowerCase(),
-									password: values[2],
-									isAdmin: values[3],
-									isTeacher: values[4],
-									firstName: values[5],
-									lastName: values[6],
-									motherLang: values[7].toUpperCase(),
-									foreignLang: values[8].toUpperCase()
-								});
-								user.save({//TODO revisar captura de errores
-									fields: ["email",
-										"username",
-										"password",
-										"isAdmin",
-										"isTeacher",
-										"firstName",
-										"lastName",
-										"motherLang",
-										"foreignLang",
-									]
-								}).then(function (result) {
-									console.log();
-									fullfill(true);
-								});
-								break;
-							case 'WORD':
-								var word = Word.build({
+			numLine++;
+			if (numLine != 1) {
+				var values = line.split(separatorCSV);
+				if (values.length < lengthStructure)
+					console.log('ERROR línea #' + numLine + ': ' + line);
+				else {
+					console.log(line);
+					switch (type) {
+						case 'USER':
+							var user = User.build({
+								email: values[0].toLowerCase(),
+								username: values[1].toLowerCase(),
+								password: values[2],
+								isAdmin: values[3],
+								isTeacher: values[4],
+								firstName: values[5],
+								lastName: values[6],
+								motherLang: values[7].toUpperCase(),
+								foreignLang: values[8].toUpperCase()
+							});
+							user.save({//TODO revisar captura de errores
+								fields: ["email",
+									"username",
+									"password",
+									"isAdmin",
+									"isTeacher",
+									"firstName",
+									"lastName",
+									"motherLang",
+									"foreignLang",
+								]
+							}).then(function () {
+								fullfill(true);
+							});
+							break;
+						case 'WORD':
+							var word = Word.build({
+								langue: values[0].toUpperCase(),
+								word: values[1].toLowerCase(),
+								aception: values[2].toLowerCase(),
+								UserId: userId
+							});
+							word.save({//TODO revisar captura de errores
+								fields: ["langue", "word", "aception", "UserId"]
+							}).then(function () {
+								fullfill(true);
+							});
+							break;
+						case 'TRANSLATION':
+							Word.findOrCreate({
+								where: {
 									langue: values[0].toUpperCase(),
 									word: values[1].toLowerCase(),
-									aception: values[2].toLowerCase(),
-									UserId: userId
-								});
-								word.save({//TODO revisar captura de errores
-									fields: ["langue", "word", "aception", "UserId"]
-								});
-								break;
-							case 'TRANSLATION':
+									aception: values[2].toLowerCase()
+								},
+								defaults: {UserId: userId},
+								attributes: ['id']
+							}).spread(function (word1, created1) {
 								Word.findOrCreate({
 									where: {
-										langue: values[0].toUpperCase(),
-										word: values[1].toLowerCase(),
-										aception: values[2].toLowerCase()
+										langue: values[3].toUpperCase(),
+										word: values[4].toLowerCase(),
+										aception: values[5].toLowerCase()
 									},
 									defaults: {UserId: userId},
 									attributes: ['id']
-								}).spread(function (word1, created1) {
-									Word.findOrCreate({
+								}).spread(function (word2, created2) {
+									Translation.find({
 										where: {
-											langue: values[3].toUpperCase(),
-											word: values[4].toLowerCase(),
-											aception: values[5].toLowerCase()
-										},
-										defaults: {UserId: userId},
-										attributes: ['id']
-									}).spread(function (word2, created2) {
-										Translation.find({
-											where: {
-												$or: [
-													{
-														Word1Id: word1.id,
-														Word2Id: word2.id
-													},
-													{
-														Word1Id: word2.id,
-														Word2Id: word1.id
-													},
-												]
-											},
-											attributes: []
-										}).then(function (busqueda) {
-											if (!busqueda) {
-												var translation = Translation.build({
+											$or: [
+												{
 													Word1Id: word1.id,
-													Word2Id: word2.id,
-													UserId: userId
-												});
-												translation.save({//TODO revisar captura de errores
-													fields: ["Word1Id", "Word2Id", "UserId"]
-												});
-											}
-										});
+													Word2Id: word2.id
+												},
+												{
+													Word1Id: word2.id,
+													Word2Id: word1.id
+												},
+											]
+										},
+										attributes: []
+									}).then(function (busqueda) {
+										if (!busqueda) {
+											var translation = Translation.build({
+												Word1Id: word1.id,
+												Word2Id: word2.id,
+												UserId: userId
+											});
+											translation.save({//TODO revisar captura de errores
+												fields: ["Word1Id", "Word2Id", "UserId"]
+											}).then(function () {
+												fullfill(true);
+											});
+										}
 									});
 								});
-								break;
-							default:
-								console.log('El tipo de archivo a parsear no se reconoce: ' + type);
-						}
+							});
+							break;
+						default:
+							console.log('El tipo de archivo a parsear no se reconoce: ' + type);
 					}
 				}
 			}
-		);
+		});
 	});
 };
 

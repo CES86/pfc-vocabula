@@ -14,16 +14,16 @@ router.get('/', sessionControl.loginTeacherRequired, exerciseControl.showExercis
 router.param('exerciseId', exerciseControl.load);  // autoload :userName
 router.param('packId', packControl.load);  // autoload :userName
 
-router.get('/add', sessionControl.loginTeacherRequired, exerciseControl.addExercise);		// formulario de seleccion de idiomas
+router.get('/add', sessionControl.loginTeacherRequired, exerciseControl.addExercise);
 router.get('/new', sessionControl.loginTeacherRequired, exerciseControl.newExercise);
-router.post('/new', sessionControl.loginTeacherRequired, exerciseControl.createExercise);		// registrar word
-
-// router.get('/extra', sessionControl.loginTeacherRequired, exerciseControl.addExtra);
-// router.post('/extra', sessionControl.loginTeacherRequired, exerciseControl.createExtra);
+router.post('/new/type/1|2|4', sessionControl.loginTeacherRequired, exerciseControl.createExercise);
+router.post('/new/type/3', sessionControl.loginTeacherRequired, exerciseControl.addExtra);
+router.post('/new/extra/3', sessionControl.loginTeacherRequired, exerciseControl.createExtra);
 
 router.get('/:exerciseId(\\d+)/detail', sessionControl.loginTeacherRequired, exerciseControl.detailExercise);
 
 router.get('/pack/:packId(\\d+)', sessionControl.loginTeacherRequired, exerciseControl.showPackExercises);
 
+router.delete('/:exerciseId(\\d+)', sessionControl.loginAdminRequired, exerciseControl.delete);
 
 module.exports = router;

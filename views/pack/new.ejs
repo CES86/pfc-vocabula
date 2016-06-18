@@ -21,9 +21,7 @@
 				<option value="<%= exercises[i].id %>">
 					[<%= exercises[i].get('typeEx') %>]
 					[<%= exercises[i].qstnLang %><%- arrow1way %>???]
-					<%= exercises[i].Translation.Word1.word %> (<%= exercises[i].Translation.Word1.aception %>)
-					<%- arrow2ways %>
-					<%= exercises[i].Translation.Word2.word %> (<%= exercises[i].Translation.Word2.aception %>)
+					<%= exercises[i].Translation.getArrowed %>
 				</option>
 				<% } %>
 			</select>

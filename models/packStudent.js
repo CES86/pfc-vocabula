@@ -22,8 +22,7 @@ module.exports = function (sequelize, DataTypes) {
 				defaultValue: 0
 			}
 		}, {
-			timestamps: true,
-			updatedAt: false
+			timestamps: true
 		}
 	);
 	return PackStudent;

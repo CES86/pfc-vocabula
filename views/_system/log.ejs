@@ -1,0 +1,61 @@
+<table class="table table-striped table-hover table-condensed">
+	<thead>
+	<tr>
+		<th colspan="12">
+			LOGs (<%= logs.length %>)
+		</th>
+	</tr>
+	<tr>
+		<th>Anal.</th>
+		<th>User</th>
+		<th>Pk</th>
+		<th>Ex</th>
+		<th>Tr</th>
+		<th>Tp Ex</th>
+		<th>Qst Lng</th>
+		<th>Qst Word</th>
+		<th>Ans Word</th>
+		<th>OK?</th>
+		<th>Fecha</th>
+	</tr>
+	</thead>
+	<% var fecha; %>
+	<% for(var i = 0; i < logs.length; i++) { fecha = logs[i].createdAt; %>
+	<tr>
+		<td>
+			<%= logs[i].analizado %>
+		</td>
+		<td>
+			<%= logs[i].UserId %>
+		</td>
+		<td>
+			<%= logs[i].PackId %>
+		</td>
+		<td>
+			<%= logs[i].ExerciseId %>
+		</td>
+		<td>
+			<%= logs[i].TranslationId %>
+		</td>
+		<td>
+			<%= logs[i].typeEx %>
+		</td>
+		<td>
+			<%= logs[i].qstnLang %>
+		</td>
+		<td>
+			<%= logs[i].qWord %>
+		</td>
+		<td>
+			<%= logs[i].aWord %>
+		</td>
+		<td>
+			<%= logs[i].correcto %>
+		</td>
+		<td>
+			<%= fecha %>
+		</td>
+	</tr>
+	<% } %>
+</table>
+<br>

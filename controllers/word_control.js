@@ -3,7 +3,7 @@ var models = require('../models/models.js');
 // Get /   -- Formulario de login
 exports.showWords = function (req, res) {
 	models.Word.findAll({
-		attributes: ['langue', 'word', 'aception'],
+		attributes: ['id', 'langue', 'word', 'aception'],
 		order: [['langue', 'ASC'], ['word', 'ASC']]
 	}).then(function (words) {
 		res.render('word/index', {
@@ -51,12 +51,26 @@ exports.uploadWordLot = function (req, res) {
 	res.redirect('/word');
 };
 
+// Autoload :id
+exports.load = function (req, res, next, wordId) {
+	models.Word.findByPrimary(wordId).then(function (word) {
+			if (word) {
+				req.word = word;
+				next();
+			} else {
+				next(new Error('No existe la Palabra = ' + wordId))
+			}
+		}
+	).catch(function (error) {
+		next(error)
+	});
+};
 
-// // GET/DELETE /user/:id
-// exports.delete = function (req, res) {
-// 	models.Word.findById(1).then(function (x) {
-// 		x.destroy().then(res.redirect('/user/alex'));
-// 	}).catch(function (error) {
-// 		next(error)
-// 	});
-// };
+// GET/DELETE /user/:id
+exports.delete = function (req, res) {
+	req.word.destroy().then(function () {
+		res.redirect(req.session.redir2);
+	}).catch(function (error) {
+		next(error)
+	});
+};

@@ -6,7 +6,7 @@
 		<th colspan="6">Answers Extra to the main Exercise</th>
 	</tr>
 	<tr>
-		<th>Langue Direction</th>
+		<th>Langue Question</th>
 		<th>Ex Type</th>
 		<th>Word Question</th>
 		<th>Word Answer</th>
@@ -43,26 +43,32 @@
 	</tr>
 	<% for(var i = 0; i < extra.length; i++) { %>
 	<tr>
-		<td>"</td>
-		<td>"</td>
+		<td></td>
+		<td></td>
 		<td>
 			<% if(exercise.qstnLang == extra[i].Translation.Word1.langue){ %>
+			<% if(exercise.typeEx == "Relation"){ %>
 			[<%= extra[i].Translation.Word1.langue %>] <%= extra[i].Translation.Word1.word %>
 			(<%= extra[i].Translation.Word1.aception %>)
+			<% } else { %>
+			<% } %>
 		</td>
 		<td>
 			[<%= extra[i].Translation.Word2.langue %>] <%= extra[i].Translation.Word2.word %>
 			(<%= extra[i].Translation.Word2.aception %>)
 			<% }else{ %>
+			<% if(exercise.typeEx == "Relation"){ %>
 			[<%= extra[i].Translation.Word2.langue %>] <%= extra[i].Translation.Word2.word %>
 			(<%= extra[i].Translation.Word2.aception %>)
+			<% } else { %>
+			<% } %>
 		</td>
 		<td>
 			[<%= extra[i].Translation.Word1.langue %>] <%= extra[i].Translation.Word1.word %>
 			(<%= extra[i].Translation.Word1.aception %>)
 			<% } %>
 		</td>
-		<td>"</td>
+		<td></td>
 	</tr>
 	<% } %>
 </table>

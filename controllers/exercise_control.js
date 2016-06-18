@@ -65,9 +65,9 @@ exports.showPackExercises = function (req, res) {
 		// 	}]
 		// }]
 	}).then(function (packEx) {
-		var exos = [];
+		var exos = [0];
 		for (var i = 0; i < packEx.length; i++) {
-			exos.push(packEx[i].ExerciseId);
+			exos = exos.concat(packEx[i].ExerciseId);
 		}
 		models.Exercise.findAll({
 			where: {
@@ -160,28 +160,109 @@ exports.newExercise = function (req, res) {
 
 // POST /word
 exports.createExercise = function (req, res) {
-	var exercise = models.Exercise.build({
-		qstnLang: req.body.question,
-		typeEx: req.body.type,
-		TranslationId: req.body.translation,
-		UserId: req.session.user.id
-	});
-	exercise.save({
-		fields: ["qstnLang", "typeEx", "TranslationId", "UserId"]
-	}).then(function (result) {
-		if (req.body.extra) {
-			for (var i = 0; i < req.body.extra.length; i++) {
+	if (req.body.extra) {//seria lo mismo que comprobar el tipo == 4
+		var exercise = models.Exercise.build({
+			qstnLang: req.body.question,
+			typeEx: req.body.type,
+			TranslationId: req.body.extra[0],
+			UserId: req.session.user.id
+		});
+		exercise.save({
+			fields: ["qstnLang", "typeEx", "TranslationId", "UserId"]
+		}).then(function (ex) {
+			for (var i = 1; i < req.body.extra.length; i++) {
 				models.ExtraEx.build({
-					ExerciseId: result.id,
+					ExerciseId: ex.id,
 					TranslationId: req.body.extra[i]
 				}).save({fields: ["ExerciseId", "TranslationId"]});
 			}
+			res.redirect('/exercise');
+		}).catch(function (error) {
+			res.render('exercise/new', {exercise: exercise, errors: error.errors});
+		});
+	} else {
+		//Estamos ante tipo 1 o 2 (Trust o Write)
+		var exercise = models.Exercise.build({
+			qstnLang: req.body.question,
+			typeEx: req.body.type,
+			TranslationId: req.body.translation,
+			UserId: req.session.user.id
+		});
+		exercise.save({
+			fields: ["qstnLang", "typeEx", "TranslationId", "UserId"]
+		}).then(function () {
+			res.redirect('/exercise');
+		}).catch(function (error) {
+			res.render('exercise/new', {exercise: exercise, errors: error.errors});
+		});
+	}
+};
+
+// Get /new   -- Formulario de seleccion de palabras
+exports.addExtra = function (req, res) {
+	models.Translation.findAll({
+			where: {id: {$ne: req.body.translation}},
+			attributes: ['id', 'Word1Id', 'Word2Id'],
+			include: [
+				{
+					model: models.Word,
+					as: 'Word1',
+					where: {
+						$or: [
+							{langue: req.body.origen},
+							{langue: req.body.destino},
+						]
+					},
+					attributes: ['word', 'aception']
+				},
+				{
+					model: models.Word,
+					as: 'Word2',
+					where: {
+						$or: [
+							{langue: req.body.origen},
+							{langue: req.body.destino},
+						]
+					},
+					attributes: ['word', 'aception']
+				}
+			]
 		}
-		res.redirect('/exercise');
-	}).catch(function (error) {
-		res.render('exercise/new', {exercise: exercise, errors: error.errors});
+	).then(function (translations) {
+		res.render('exercise/extra', {
+			origenLang: req.body.origen,
+			destinoLang: req.body.destino,
+			qstnLang : req.body.question,
+			TranslationId: req.body.translation,
+			translations: translations,
+			type: req.body.type,
+			errors: []
+		});
 	});
-}
+};
+
+// POST /word
+exports.createExtra = function (req, res) {
+		var exercise = models.Exercise.build({
+			qstnLang: req.body.question,
+			typeEx: req.body.type,
+			TranslationId: req.body.translation,
+			UserId: req.session.user.id
+		});
+		exercise.save({
+			fields: ["qstnLang", "typeEx", "TranslationId", "UserId"]
+		}).then(function (ex) {
+			for (var i = 0; i < req.body.extra.length; i++) {
+				models.ExtraEx.build({
+					ExerciseId: ex.id,
+					TranslationId: req.body.extra[i]
+				}).save({fields: ["ExerciseId", "TranslationId"]});
+			}
+			res.redirect('/exercise');
+		}).catch(function (error) {
+			res.render('exercise/new', {exercise: exercise, errors: error.errors});
+		});
+};
 
 // Autoload :id
 exports.load = function (req, res, next, exerciseId) {
@@ -244,5 +325,14 @@ exports.detailExercise = function (req, res) {
 			extra: extraEx || [],
 			errors: []
 		});
+	});
+};
+
+// GET/DELETE /user/:id
+exports.delete = function (req, res) {
+	req.exercise.destroy().then(function () {
+		res.redirect(req.session.redir2);
+	}).catch(function (error) {
+		next(error)
 	});
 };

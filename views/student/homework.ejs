@@ -1,0 +1,92 @@
+<% var arrow1way = " &#x21c9; " %>
+<form method="post" action="/user/<%= user.username %>/homework/<%= pack.id %>">
+	<fieldset>
+		<legend>Realización del PAQUETE de EJERCICIOS <%= pack.title %> (<%= exercises.length %> ej.)</legend>
+		<% var qWord, aWord, fieldName;
+		for(var i = 0; i < exercises.length; i++) {
+			fieldName = exercises[i].id + "." + exercises[i].Translation.id;
+			if (exercises[i].qstnLang == exercises[i].Translation.Word1.langue) {
+				qWord = exercises[i].Translation.Word1;
+				aWord = exercises[i].Translation.Word2;
+			} else {
+				qWord = exercises[i].Translation.Word2;
+				aWord = exercises[i].Translation.Word1;
+			} %>
+		<fieldset>
+			<legend>Ejercicio <%= i + 1 %> (<%= qWord.langue %> <%- arrow1way %> <%= aWord.langue %>?)</legend>
+			<% switch(exercises[i].typeEx){
+			case 'Trust': %>
+			<label>Palabra "<%= qWord.word %>": </label>
+			<% var popUp = "Respuesta: " + aWord.word %>
+			<input class="btn btn-info btn-sm" type="button" onclick="alert('<%= popUp %>')" value="Traducción"/>
+			<br>
+			<br>
+			<label for="<%= fieldName %>">Valora tu respuesta:</label>
+			<select name="<%= fieldName %>" required>
+				<option value="">-</option>
+				<option value="<%= 0.5 * 0 %>"><%= 0.5 * 0 %></option>
+				<option value="<%= 0.5 * 1 %>"><%= 0.5 * 1 %></option>
+				<option value="<%= 0.5 * 2 %>"><%= 0.5 * 2 %></option>
+			</select>
+			<% break; %>
+			<!--//////////////////////////////////////////////////-->
+			<% case 'Write': %>
+			<label for="<%= fieldName %>">Palabra "<%= qWord.word %>": </label>
+			<input type="text" name="<%= fieldName %>" placeholder="Respuesta" required/>
+			<% break; %>
+			<!--//////////////////////////////////////////////////-->
+			<% case 'Select': %>
+			<label for="<%= fieldName %>">Palabra "<%= qWord.word %>": </label>
+			<input type="radio" name="<%= fieldName %>" value="<%= aWord.word %>" required> <%= aWord.word %>
+			<% var eWord = "";
+			for(var j = 0; j < extras.length; j++){
+			if(extras[j].ExerciseId == exercises[i].id){
+				if (qWord.langue == extras[j].Translation.Word1.langue)
+					eWord = extras[j].Translation.Word2; else eWord = extras[j].Translation.Word1 %>
+			<input type="radio" name="<%= fieldName %>" value="<%= eWord.word %>" required> <%= eWord.word %>
+			<% } %>
+			<% } %>
+			<br>
+			<% break; %>
+			<!--//////////////////////////////////////////////////-->
+			<% case 'Relation': %>
+			<label for="<%= fieldName %>">Palabra "<%= qWord.word %>": </label>
+			<input type="radio" name="<%= fieldName %>" value="<%= aWord.word %>" required> <%= aWord.word %>
+			<!--Aqui se generan las otras n-1 respuestas alternativas, que son las respuestas de las otras palabras-->
+			<% var qExWord, aExWord;
+			for(var j = 0; j < extras.length; j++){
+			if(extras[j].ExerciseId == exercises[i].id){
+				if (qWord.langue == extras[j].Translation.Word1.langue)
+					aExWord = extras[j].Translation.Word2; else aExWord = extras[j].Translation.Word1 %>
+			<input type="radio" name="<%= fieldName %>" value="<%= aExWord.word %>" required> <%= aExWord.word %>
+			<% } %>
+			<% } %>
+			<br>
+			<br>
+			<% for(var k = 0; k < extras.length; k++){
+			if(extras[k].ExerciseId == exercises[i].id){
+				fieldName = exercises[i].id + "." + extras[k].Translation.id;
+				if (exercises[i].qstnLang == extras[k].Translation.Word1.langue)
+					qExWord = extras[k].Translation.Word1; else qExWord = extras[k].Translation.Word2; %>
+			<label for="<%= fieldName %>">Palabra "<%= qExWord.word %>": </label>
+			<input type="radio" name="<%= fieldName %>" value="<%= aWord.word %>" required> <%= aWord.word %>
+			<% for(var j = 0; j < extras.length; j++){
+			if(extras[j].ExerciseId == exercises[i].id){
+				if (qWord.langue == extras[j].Translation.Word1.langue)
+					aExWord = extras[j].Translation.Word2; else aExWord = extras[j].Translation.Word1 %>
+			<input type="radio" name="<%= fieldName %>" value="<%= aExWord.word %>" required> <%= aExWord.word %>
+			<% }
+			} %>
+			<br>
+			<br>
+			<% }
+			} %>
+			<% break; %>
+			<% } %>
+		</fieldset>
+		<br>
+		<br>
+		<% } %>
+		<% include ../includes/_buttons.ejs %>
+	</fieldset>
+</form>

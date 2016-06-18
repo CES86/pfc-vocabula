@@ -1,0 +1,22 @@
+<% var sizeSelect = 5 %>
+<form method="post" action="">
+	<fieldset>
+		<legend>
+			Asignar el paquete <%= pack.title %> (<%= pack.getArrowed %>) a...
+		</legend>
+		<fieldset>
+			<legend> Seleccione las clases para asignar la tarea</legend>
+			<% if(groups.length == 0){ %>
+			<label>No hay clases con las características buscadas.</label><br>
+			<% }else{ %>
+			<label for="cgSelected">Utilize la tecla Ctrl para seleccionar varios</label><br>
+			<select name="cgSelected" size="<%= sizeSelect %>" multiple required>
+				<% for(var i = 0; i < groups.length; i++) { %>
+				<option value="<%= groups[i].id %>">[<%= groups[i].getArrowed %>] <%= groups[i].name %></option>
+				<% } %>
+			</select>
+			<% } %>
+		</fieldset>
+		<% include ../includes/_buttons.ejs %>
+	</fieldset>
+</form>

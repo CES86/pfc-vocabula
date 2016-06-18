@@ -27,7 +27,7 @@ exports.addPack = function (req, res) {
 // Get /new   -- Formulario de seleccion de palabras
 exports.newPack = function (req, res) {
 	if (req.query.origen != req.query.destino) {
-		var queryType = [];
+		var queryType = [0];
 		var allTypes = ['1', '2', '3', '4'];
 		queryType = queryType.concat(req.query.type || allTypes);
 		models.Exercise.findAll({
@@ -113,6 +113,95 @@ exports.createPack = function (req, res) {
 	});
 };
 
+// GET /user/:id/edit
+exports.showHomeWorkPack = function (req, res) {
+	models.PackStudent.findAll({
+		where: {
+			PackId: req.pack.id
+		},
+		attributes: ["UserId"]
+	}).then(function (alreadySet) {
+		var sts = [0];
+		for (var i = 0; i < alreadySet.length; i++) {
+			sts = sts.concat(alreadySet[i].UserId);
+		}
+		models.User.findAll({
+			where: {
+				isAdmin: false,
+				isTeacher: false,
+				$or: [
+					{
+						motherLang: req.pack.langue1,
+						foreignLang: req.pack.langue2
+					},
+					{
+						motherLang: req.pack.langue2,
+						foreignLang: req.pack.langue1
+					},
+				],
+				id: {$notIn: sts}
+			},
+			attributes: ['id', 'username', 'firstName', 'lastName']
+		}).then(function (students) {
+			res.render('pack/homework', {
+				students: students,
+				pack: req.pack,
+				errors: []
+			});
+		});
+	});
+};
+
+// POST /word
+exports.createHomeWorkPack = function (req, res) {
+	for (var i = 0; i < req.body.stSelected.length; i++) {
+		models.PackStudent.build({
+			PackId: req.pack.id,
+			UserId: req.body.stSelected[i]
+		}).save({fields: ["PackId", "UserId"]});
+	}
+	res.redirect('/user/pack/' + req.pack.id);
+};
+
+// GET /user/:id/edit
+exports.showClassGroupPack = function (req, res) {
+	models.ClassGroup.findAll({
+		where: {
+			$or: [
+				{langTranslation: req.pack.langue1 + req.pack.langue2},
+				{langTranslation: req.pack.langue2 + req.pack.langue1},
+			]
+		},
+		attributes: ["id", "name", "langTranslation", "UserId"]
+	}).then(function (groups) {
+		res.render('pack/classgroup', {
+			groups: groups,
+			pack: req.pack,
+			errors: []
+		});
+	});
+};
+
+// POST /word
+exports.createClassGroupPack = function (req, res) {
+	for (var i = 0; i < req.body.cgSelected.length; i++) {
+		models.User.findAll({
+			where: {
+				ClassGroupId: req.body.cgSelected[i]
+			},
+			attributes: ["id"]
+		}).then(function (usersCG) {
+			for (var j = 0; j < usersCG.length; j++) {
+				models.PackStudent.build({
+					PackId: req.pack.id,
+					UserId: usersCG[j].id
+				}).save({fields: ["PackId", "UserId"]});
+			}
+			res.redirect('/user/pack/' + req.pack.id);
+		});
+	}
+};
+
 // Autoload :id
 exports.load = function (req, res, next, packId) {
 	models.Pack.findByPrimary(packId, {
@@ -135,4 +224,26 @@ exports.load = function (req, res, next, packId) {
 	});
 };
 
+// GET/DELETE /user/:id
+exports.delete = function (req, res) {
+	req.pack.destroy().then(function () {
+		res.redirect(req.session.redir2);
+	}).catch(function (error) {
+		next(error)
+	});
+};
 
+// GET/DELETE /user/:id
+exports.removeStudent = function (req, res) {
+	models.PackStudent.find({
+			where: {
+				PackId: req.pack.id,
+				UserId: req.user.id
+			}
+		}
+	).then(function (pack) {
+		pack.destroy().then(function () {
+			res.redirect('/user/pack/' + req.pack.id);
+		});
+	});
+};

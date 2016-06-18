@@ -1,5 +1,5 @@
 <% var sizeSelect = 5 %>
-<% var  arrow1way= " &#x21c9; " %>
+<% var arrow1way = " &#x21c9; " %>
 <form method="post" action="/group/new">
 	<fieldset>
 		<legend>Crear un GRUPO nuevo</legend>
@@ -9,14 +9,15 @@
 		</p>
 		<fieldset>
 			<legend> Seleccione l@s estudiantes para el nuevo GRUPO (Use la tecla Ctrl)</legend>
-			<label for="stSelected"><%= origenLang %><%-  arrow1way%><%= destinoLang %>:</label><br>
+			<label for="stSelected"><%= origenLang %><%- arrow1way %><%= destinoLang %>:</label><br>
 			<select name="stSelected" size="<%= sizeSelect %>" multiple required>
 				<% for(var i = 0; i < students.length; i++) { %>
 				<option value="<%= students[i].id %>"><%= students[i].username %></option>
 				<% } %>
 			</select>
 		</fieldset>
-		<input type="hidden" name="langTranslation" value="<%= origenLang + destinoLang %>">
+		<input type="hidden" name="origenLang" value="<%= origenLang %>">
+		<input type="hidden" name="destinoLang" value="<%= destinoLang %>">
 		<% include ../includes/_buttons.ejs %>
 	</fieldset>
 </form>

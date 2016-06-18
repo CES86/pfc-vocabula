@@ -32,7 +32,6 @@ module.exports = function (sequelize, DataTypes) {
 			username: {
 				type: DataTypes.STRING,
 				allowNull: false,
-				// primaryKey: true,
 				isAlpha: true,
 				//unique: true, // no poner si pones modo paranoico! mejor con funcion validate!
 				validate: {

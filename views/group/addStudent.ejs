@@ -2,10 +2,9 @@
 <form method="post" action="">
 	<fieldset>
 		<legend>
-			Asignar el paquete <%= pack.title %> (<%= pack.getArrowed %>) a...
-		</legend>
+			Añadir al <%= group.name %> (<%= group.getArrowed %>) los alumn@s...</legend>
 		<fieldset>
-			<legend> Seleccione l@s estudiantes para asignar la tarea</legend>
+			<legend> Seleccione l@s estudiantes para asignar al Grupo</legend>
 			<% if(students.length == 0){ %>
 			<label>No hay alumnos con las características buscadas.</label><br>
 			<% }else{ %>
